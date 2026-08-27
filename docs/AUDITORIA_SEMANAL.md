@@ -21,6 +21,17 @@ Executar uma vez por semana, preferencialmente antes de qualquer atualização d
 - [ ] Opt-out respeitado.
 - [ ] `###DADOS###` válido e removido da mensagem ao paciente.
 
+## 2.1 Indicadores comerciais e de agenda
+
+- [ ] Novos contatos únicos cuja primeira interação ocorreu no período.
+- [ ] Contatos únicos que receberam orçamento válido no período.
+- [ ] Solicitações de agendamento registradas no atendimento.
+- [ ] Pacientes únicos com evento confirmado no Google Agenda.
+- [ ] Calendários e intervalo de datas consultados registrados no relatório.
+- [ ] Eventos cancelados/excluídos separados dos agendamentos confirmados.
+
+Não tratar solicitação ou intenção como agendamento concluído. O indicador “pacientes agendados” exige confirmação por evento existente no Google Agenda.
+
 ## 3. IA e tokens
 
 - [ ] Tokens de entrada e saída por chamada.
