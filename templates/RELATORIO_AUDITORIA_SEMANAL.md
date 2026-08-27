@@ -10,6 +10,21 @@
 
 ## Métricas
 
+### Indicadores comerciais e operacionais
+
+| Indicador | Quantidade | Fonte | Regra de contagem |
+|---|---:|---|---|
+| Novos contatos realizados | | Banco de leads/mensagens | Contatos únicos cuja primeira interação ocorreu no período |
+| Orçamentos realizados | | Banco de mensagens/eventos | Contatos únicos que receberam um orçamento válido no período |
+| Solicitações de agendamento | | Banco de mensagens/eventos | Contatos únicos encaminhados para agendamento no período |
+| Pacientes agendados | | Google Agenda | Pacientes únicos com evento confirmado no período |
+
+Período consultado no Google Agenda:
+
+Calendários consultados:
+
+Eventos cancelados ou excluídos devem ser informados separadamente e não entram em “pacientes agendados”. Não contabilizar apenas a intenção ou solicitação de agendamento como evento confirmado.
+
 | Fluxo | Execuções | Sucesso | Erros | Tempo p95 | Tokens entrada | Tokens saída | Custo estimado |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | ANA 01 | | | | | | | |
