@@ -41,6 +41,121 @@ COMMENT ON SCHEMA ana_ml IS 'Ana ML v1: auditoria operacional; sem decisões cl�
 
 SELECT jsonb_build_object('instalado',true,'schema','ana_ml','role',current_user,'tabelas',(SELECT count(*) FROM information_schema.tables WHERE table_schema='ana_ml')) AS resultado;
 
+CREATE OR REPLACE FUNCTION ana_ml.collect_demand(p_days integer DEFAULT 90)
+RETURNS jsonb LANGUAGE sql STABLE SET search_path=pg_catalog,public,ana_ml AS $fn$
+WITH bounds AS (
+ SELECT now() as collected_at,(now() AT TIME ZONE 'America/Sao_Paulo')::date AS today,greatest(1,least(coalesce(p_days,90),90)) AS days
+), dictionary_raw(kind,service,rx,exclude_rx) AS (VALUES
+ ('Exame','Hemograma','\mhemograma\M',NULL),
+ ('Exame','Toxicológico','toxicolog',NULL),
+ ('Exame','Ultrassonografia transvaginal','transvaginal',NULL),
+ ('Exame','Ultrassonografia obstétrica','obstetric',NULL),
+ ('Exame','Ultrassonografia morfológica','morfologic',NULL),
+ ('Exame','Ultrassonografia abdominal','((ultra|ecograf).*(abdom)|(abdom).*(ultra|ecograf))',NULL),
+ ('Exame','Ultrassonografia pélvica','((ultra|ecograf).*pelvic|pelvic.*(ultra|ecograf))',NULL),
+ ('Exame','Ultrassonografia mamária','((ultra|ecograf).*(mama|mamaria)|(mama|mamaria).*(ultra|ecograf))',NULL),
+ ('Exame','Ultrassonografia de tireoide','((ultra|ecograf).*tireo|tireo.*(ultra|ecograf))',NULL),
+ ('Exame','Ultrassonografia — tipo não especificado','(ultrasso|ultra[ -]?som|ecograf)','(transvaginal|obstetric|morfologic|abdom|pelvic|mama|tireo|doppler)'),
+ ('Exame','Doppler','doppler',NULL),
+ ('Exame','Exames laboratoriais — genérico','(exames? (de sangue|laboratoria[l]|laboratoriais)|analises clinicas)',NULL),
+ ('Exame','TSH','\mtsh\M',NULL),
+ ('Exame','T4 livre','\mt4\M',NULL),
+ ('Exame','TGO / AST','\m(tgo|ast)\M',NULL),
+ ('Exame','TGP / ALT','\m(tgp|alt)\M',NULL),
+ ('Exame','Vitamina B12','(vitamina[ ]*b[ ]*12|\mb12\M)',NULL),
+ ('Exame','Vitamina D','(vitamina[ ]*d\M|25.{0,15}hidroxi)',NULL),
+ ('Exame','Vitamina C','vitamina[ ]*c\M',NULL),
+ ('Exame','Creatinina','creatinina',NULL),
+ ('Exame','Ureia','ureia',NULL),
+ ('Exame','Ferritina','ferritina',NULL),
+ ('Exame','Glicose / glicemia','(glicose|glicemia)',NULL),
+ ('Exame','Hemoglobina glicada','(hemoglobina glicada|hba1c)',NULL),
+ ('Exame','Colesterol','colesterol',NULL),
+ ('Exame','Triglicerídeos','(triglicerid|triglicer[ií]d|trigliceri)',NULL),
+ ('Exame','Gama GT','(gama[ -]?gt|\mggt\M)',NULL),
+ ('Exame','Potássio','potassio',NULL),
+ ('Exame','Sódio','sodio',NULL),
+ ('Exame','Magnésio','magnesio',NULL),
+ ('Exame','Homocisteína','homocisteina',NULL),
+ ('Exame','VHS','\mvhs\M',NULL),
+ ('Exame','FSH','\mfsh\M',NULL),
+ ('Exame','LH','\mlh\M',NULL),
+ ('Exame','Estradiol','estradiol',NULL),
+ ('Exame','Insulina','\minsulina\M',NULL),
+ ('Exame','Sexagem fetal','sexagem',NULL),
+ ('Exame','Holter','holter',NULL),
+ ('Exame','MAPA','(\mmapa\M.{0,12}(24|pressao)|exame.{0,12}\mmapa\M|^mapa$)',NULL),
+ ('Exame','Eletrocardiograma','(eletrocardio|\mecg\M)',NULL),
+ ('Exame','Ecocardiograma','(ecocardio)',NULL),
+ ('Exame','Tomografia','tomograf',NULL),
+ ('Exame','Ressonância magnética','ressonancia',NULL),
+ ('Exame','Mamografia','mamograf',NULL),
+ ('Exame','Densitometria','densitometr',NULL),
+ ('Exame','Colonoscopia','colonoscop',NULL),
+ ('Exame','Endoscopia','endoscop',NULL),
+ ('Exame','Eletroneuromiografia','(eletroneuromiograf|\menmg\M)',NULL),
+ ('Exame','Raio X','(raio[ -]?x|radiograf)',NULL),
+ ('Exame','Eletroencefalograma','(eletroencefalo|\meeg\M)',NULL),
+ ('Exame','Espirometria','espirometr',NULL),
+ ('Exame','Audiometria','audiometr',NULL),
+ ('Exame','Beta HCG','(beta[ -]?hcg|\mbhcg\M)',NULL),
+ ('Exame','Urina / urocultura','(urina|urocultura)',NULL),
+ ('Exame','Parasitológico / fezes','(parasitolog|exame de fezes)',NULL),
+ ('Consulta','Cardiologia','(cardiologista|consulta.{0,35}cardiolog)',NULL),
+ ('Consulta','Ginecologia','(ginecologista|consulta.{0,35}ginecolog)',NULL),
+ ('Consulta','Pediatria','(pediatra|consulta.{0,35}pediatri)',NULL),
+ ('Consulta','Dermatologia','(dermatologista|consulta.{0,35}dermatolog)',NULL),
+ ('Consulta','Endocrinologia','(endocrinologista|consulta.{0,35}endocrinolog)',NULL),
+ ('Consulta','Neurologia','(neurologista|consulta.{0,35}neurolog)',NULL),
+ ('Consulta','Ortopedia','(ortopedista|consulta.{0,35}ortopedi)',NULL),
+ ('Consulta','Clínica geral','(clinico geral|consulta.{0,20}clinic)',NULL),
+ ('Consulta','Urologia','(urologista|consulta.{0,35}urolog)',NULL),
+ ('Consulta','Consulta — especialidade não identificada','\mconsultas?\M','(cardiolog|ginecolog|pediatr|dermatolog|endocrinolog|neurolog|ortopedi|clinic|urolog|consulta.{0,12}(resultado|exame|laudo))')
+), dictionary AS (
+ SELECT d.*,CASE WHEN service IN ('Hemograma','Exames laboratoriais — genérico','TSH','T4 livre','TGO / AST','TGP / ALT','Vitamina B12','Vitamina D','Vitamina C','Creatinina','Ureia','Ferritina','Glicose / glicemia','Hemoglobina glicada','Colesterol','Triglicerídeos','Gama GT','Potássio','Sódio','Magnésio','Homocisteína','VHS','FSH','LH','Estradiol','Insulina','Sexagem fetal','Beta HCG','Urina / urocultura','Parasitológico / fezes') THEN 'Laboratorial' ELSE service END category
+ FROM dictionary_raw d
+), raw AS MATERIALIZED (
+ SELECT m.phone,m.role,m.dados,(m.created_at AT TIME ZONE 'America/Sao_Paulo')::date AS day,
+ translate(lower(coalesce(m.conteudo,'')),'áàâãäéèêëíìîïóòôõöúùûüç','aaaaaeeeeiiiiooooouuuuc') txt
+ FROM public.ana_mensagens m CROSS JOIN bounds b
+ WHERE m.created_at>=((b.today-b.days)::timestamp AT TIME ZONE 'America/Sao_Paulo')
+ AND m.created_at<=b.collected_at AND m.phone IS NOT NULL
+), observations AS MATERIALIZED (
+ SELECT phone,day,'mensagem_cliente'::text source,txt FROM raw WHERE role='user'
+ UNION ALL
+ SELECT r.phone,r.day,'estrutura_ana',translate(lower(x #>> '{}'),'áàâãäéèêëíìîïóòôõöúùûüç','aaaaaeeeeiiiiooooouuuuc')
+ FROM raw r CROSS JOIN LATERAL jsonb_array_elements(CASE WHEN jsonb_typeof(dados->'exames_mencionados')='array' THEN dados->'exames_mencionados' ELSE '[]'::jsonb END) x
+ WHERE jsonb_typeof(x)='string'
+), classified AS MATERIALIZED (
+ SELECT o.txt,d.kind,d.service,d.category
+ FROM (SELECT DISTINCT txt FROM observations) o JOIN dictionary d ON o.txt~d.rx AND (d.exclude_rx IS NULL OR o.txt!~d.exclude_rx)
+), detected AS MATERIALIZED (
+ SELECT DISTINCT o.phone,o.day,o.source,d.kind,d.service,d.category
+ FROM observations o JOIN classified d ON d.txt=o.txt
+), daily AS (
+ SELECT day,source,kind,service,category,'service'::text level,count(*) n FROM detected GROUP BY day,source,kind,service,category
+ UNION ALL
+ SELECT day,source,kind,category,category,'category',count(DISTINCT phone) FROM detected GROUP BY day,source,kind,category
+), matched AS (
+ SELECT DISTINCT phone,day,source FROM detected
+), coverage AS (
+ SELECT o.day,o.source,count(DISTINCT o.phone) contact_days,
+ count(DISTINCT o.phone) FILTER(WHERE m.phone IS NOT NULL) matched_contact_days,
+ count(*) observations,
+ count(*) FILTER(WHERE recognized.txt IS NULL) unmatched_observations
+ FROM observations o LEFT JOIN matched m ON m.phone=o.phone AND m.day=o.day AND m.source=o.source
+ LEFT JOIN (SELECT DISTINCT txt FROM classified) recognized ON recognized.txt=o.txt GROUP BY o.day,o.source
+)
+SELECT jsonb_build_object('version','ana-demand-1.0.0','as_of',b.collected_at,'date_min',(SELECT min(day) FROM raw),'date_max',b.today,
+ 'window_days',b.days,'dictionary_size',(SELECT count(*) FROM dictionary),
+ 'rows',coalesce((SELECT jsonb_agg(jsonb_build_object('date',day,'source',source,'kind',kind,'service',service,'category',category,'level',level,'count',n) ORDER BY day,source,level,kind,service) FROM daily),'[]'::jsonb),
+ 'coverage',coalesce((SELECT jsonb_agg(to_jsonb(c) ORDER BY day,source) FROM coverage c),'[]'::jsonb))
+FROM bounds b;
+$fn$;
+REVOKE ALL ON FUNCTION ana_ml.collect_demand(integer) FROM PUBLIC;
+SELECT jsonb_build_object('dashboard_demanda_instalado',true) AS resultado;
+
+
 CREATE OR REPLACE FUNCTION ana_ml.collect_features(p_days integer DEFAULT 90)
 RETURNS jsonb LANGUAGE sql STABLE SET search_path=pg_catalog,public,ana_ml AS $fn$
 WITH bounds AS (
@@ -101,6 +216,7 @@ SELECT jsonb_build_object('collected_at',b.collected_at,'today',b.today,'window_
  'eligible_sessions',(SELECT count(*) FROM eligible),'selected_sessions',(SELECT count(*) FROM selected),
  'source_messages',(SELECT count(*) FROM raw),'excluded_no_user',(SELECT count(*) FROM grouped WHERE user_count=0),
  'sessions',coalesce((SELECT jsonb_agg(f ORDER BY f->>'day',f->>'session_id') FROM features),'[]'::jsonb),
+ 'demand',ana_ml.collect_demand(b.days),
  'model',(SELECT artifact FROM ana_ml.models WHERE algorithm_version='ana-ml-1.0.0' ORDER BY created_at DESC LIMIT 1))
 FROM bounds b;
 $fn$;
