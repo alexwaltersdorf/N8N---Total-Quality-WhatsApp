@@ -1,0 +1,13 @@
+{
+  "versao": "clareza-v1",
+  "aplicado_em": "2026-10-12T13:28:42.357431+00:00",
+  "alvo": "ana_config.system_prompt",
+  "modulo_sha256": "79cbb53251482d35d161caaed65ea0b4ae6f224511d94351fde94303e3d9b6b0",
+  "backup": "system_prompt_backup_2026_10_12_clareza_v1",
+  "backup_validado": true,
+  "modulo_unico": true,
+  "hash_verificado": true,
+  "testes_sinteticos": 8,
+  "mensagens_de_teste_enviadas_a_pacientes": 0,
+  "limite": "Não altera textos fixos, prompt da auditoria, catálogo ou lógica dos fluxos."
+}

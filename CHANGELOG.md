@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-10-12
+
+### Auditados e documentados
+
+- 12 fluxos, 125 nós; 18 achados com evidências e critérios de aceite.
+- Manual e auditoria em HTML; inventário versionado e modelo semanal HTML.
+- Corrigidas as descrições de ANA-02 (texto fixo), ANA-04 (00:00), catálogo de fluxos, anonimização e cálculo de cache.
+- O registro de agosto foi preservado como histórico. O texto antigo de remoção de telefones se refere ao campo explícito; a transcrição livre ainda pode conter identificadores.
+
+### Aplicado à base ativa
+
+- Módulo Clareza V1 anteposto ao `ana_config.system_prompt`, com backup, comparação de hash e leitura de verificação.
+- Oito cenários sintéticos da IA concluídos; oito reproduções locais de riscos documentadas. Nenhum teste enviou WhatsApp a pacientes.
+- Textos fixos, regras SQL, catálogo e fluxos de produção não foram corrigidos por esta implantação; permanecem no plano priorizado.
+
+
 ## 2026-08-27
 
 ### Alterado
