@@ -7,6 +7,15 @@
 Documentação revisada em **12/10/2026** a partir de 12 fluxos n8n (125 nós), configuração do banco, testes sintéticos e comparação com o manual anterior.
 
 
+## Base de conhecimento vigente — V2
+
+Revisão aplicada em **12/10/2026 às 16:16 (São Paulo)** ao `ana_config.system_prompt`, com backup e conferência da versão gravada.
+
+- [Avaliação, alterações e validação em HTML](conhecimento/revisao-2026-10-12-v2.html)
+- [Módulo operacional Conhecimento V2](conhecimento/conhecimento-validado-v2.md)
+
+A revisão corrige conflitos de preços, identificação de exames, Laboratorial, anexos, agenda e encaminhamento. Mantém o princípio de clareza e os limites clínicos. Os 16 cenários sintéticos passaram na rodada final; isso não substitui a validação humana dos preparos nem corrige os achados técnicos ainda pendentes dos fluxos. O prompt integral e os dados dos pacientes permanecem privados.
+
 ## Comece aqui
 
 
