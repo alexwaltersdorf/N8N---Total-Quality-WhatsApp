@@ -1,37 +1,9 @@
-# Segurança, privacidade e compliance
+# Segurança e tratamento de dados
 
-## Dados tratados
+Revisado em 12/10/2026.
 
-- Telefone e nome do paciente.
-- Conteúdo de mensagens.
-- Pedidos médicos, exames e preferências de agenda.
-- Estado comercial e resumo interno.
+Omitir o campo telefone não anonimiza transcrição. Manter dados pessoais e exports brutos fora do repositório público. Rever consentimento global, acesso, finalidade e retenção; esta é uma revisão técnica, não certificação jurídica.
 
-## Princípios
+A fonte operacional atual é o [manual HTML](manual-ana.html#seguranca). Consulte também a [auditoria de outubro](../auditorias/2026/2026-10-12.html).
 
-1. Minimização: enviar ao modelo somente o necessário.
-2. Finalidade: usar dados apenas para atendimento e melhoria autorizada.
-3. Segregação: credenciais em variáveis/credenciais do n8n.
-4. Rastreabilidade: mudanças publicadas com versão e descrição.
-5. Retenção: revisar periodicamente logs, execuções e tabelas.
-
-## Regras obrigatórias
-
-- Nunca versionar chaves, tokens, telefones ou transcrições reais.
-- Não enviar telefone à IA de auditoria.
-- Não produzir diagnóstico ou recomendação médica.
-- Não prometer resultado clínico.
-- Não usar medo, urgência artificial ou pressão indevida.
-- Não confirmar disponibilidade de agenda pelo bot.
-- Respeitar opt-out imediatamente.
-- Escalar emergência, reclamação, privacidade e conflito.
-
-## Revisão de acesso
-
-Trimestralmente:
-
-- revisar usuários do n8n e PostgreSQL;
-- rotacionar segredos quando necessário;
-- remover credenciais e integrações sem uso;
-- verificar escopo das credenciais Google e WhatsApp;
-- revisar retenção de execuções do n8n.
+O estado documentado em agosto permanece no histórico Git e no relatório datado; não deve ser aplicado como configuração atual.
