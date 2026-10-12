@@ -60,5 +60,6 @@ O relatório registra 18 achados, incluindo correções ainda pendentes. A atual
 - [Workflow de download HTML e fila privada](ml/workflow-relatorio-html.json)
 - [Schema e funções privadas](ml/database.sql), [consultas operacionais](ml/operacao.sql) e [patch de integração ANA04](ml/integrar-ana04.py)
 - [Núcleo JavaScript](ml/core.cjs) e [testes reproduzíveis](ml/tests.cjs)
+- [Dashboard HTML de procura por exames e consultas](ml/dashboard.cjs): filtros por data, tipo, fonte e agrupamento; exames de sangue reunidos em Laboratorial, com detalhamento individual opcional. Contagens deduplicadas por contato/dia/categoria; a data é a da mensagem, não da realização do procedimento.
 
 O novo fluxo analisa indicadores a cada 15 minutos, treina K-Means diariamente e prioriza a amostra do ANA04 com comparação. Sentimento, nota e lacunas são heurísticas identificadas; anomalias não comprovam falha. Follow-ups permanecem em observação, sem envio ou edição automática da base. Relatórios reais e referências internas ficam no ambiente privado. A auditoria anterior continua válida para os achados ainda pendentes.
