@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Auditoria profunda · fluxos e conhecimento da Ana</title>
+<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f2f5f6;color:#19333f;font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}a{color:#086779}a:hover{text-decoration-thickness:3px}header{background:#123745;color:white;padding:54px max(24px,calc((100vw - 1180px)/2));border-bottom:8px solid #31c2ad}header .eyebrow{color:#94e7db;letter-spacing:.13em;font-size:12px;font-weight:750;text-transform:uppercase}header h1{max-width:950px;font-size:clamp(32px,4.4vw,56px);line-height:1.1;margin:18px 0}header p{max-width:870px;color:#d6e5eb}main{max-width:1230px;margin:auto;padding:28px 24px 80px}nav{background:#fff;position:sticky;top:0;z-index:2;border-bottom:1px solid #d1dfe4;padding:12px 20px;display:flex;gap:18px;flex-wrap:wrap;font-size:14px}nav a{text-decoration:none;font-weight:650}section{scroll-margin-top:90px;background:#fff;border:1px solid #d9e4e7;border-radius:14px;padding:30px;margin:24px 0;box-shadow:0 5px 14px #102e3505}h2{font-size:28px;line-height:1.2;margin:0 0 18px}h3{font-size:20px;line-height:1.3}p{margin:10px 0}.lead{font-size:20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.card{border:1px solid #d5e4e7;border-radius:10px;padding:20px;background:#f8fbfc}.big{display:block;font-size:36px;font-weight:800;line-height:1.2}.muted,small{color:#536b76}.pill{display:inline-block;border-radius:20px;padding:3px 11px;font-size:12px;font-weight:800;background:#e1f2ef;color:#0b695a}.P1{background:#fff0e7;color:#a94715}.P2{background:#e8efff;color:#315d8f}.callout{border-left:5px solid #21a38f;padding:18px 22px;background:#eaf8f5;margin:18px 0}.warn{border-color:#dc9350;background:#fff5e8}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #d7e2e6;padding:12px}th{background:#edf4f6}td:first-child{font-weight:650}code{font:13px/1.5 ui-monospace,Consolas,monospace;background:#edf2f5;padding:2px 4px;overflow-wrap:anywhere}pre{background:#102c38;color:#e4f3f6;padding:22px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.65 ui-monospace,Consolas,monospace}details{border:1px solid #d5e3e8;border-radius:10px;margin:14px 0;padding:16px 20px}summary{cursor:pointer;font-weight:750;line-height:1.5}details p{font-size:15px}label{display:block;font-weight:650;margin:15px 0 6px}input,select,button{font:inherit;border:1px solid #a1b8c3;border-radius:7px;padding:10px 12px;background:white;color:#19333f}input{width:min(650px,100%)}button{cursor:pointer}button:hover{background:#dff2ee}.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.flow span{padding:12px 15px;border-radius:8px;background:#eaf3f6}.arrow{font-size:26px;color:#299d91}.checklist li{margin:8px 0}footer{padding:25px;text-align:center;color:#5b7280;font-size:13px}.badge-line{display:flex;gap:10px;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}.hidden{display:none!important}.status{font-size:14px;font-weight:650}.no-print{display:block}img{max-width:100%;border:1px solid #b9cdd5;border-radius:10px}blockquote{font-size:26px;line-height:1.4;color:#087665;margin:20px 0;font-weight:650}@media(max-width:750px){section{padding:20px}.split{grid-template-columns:1fr}nav{position:static}main{padding:12px}header{padding:35px 24px}table{min-width:650px}}@media print{nav,.no-print{display:none}body{background:white;font-size:11pt}header{background:white;color:#19333f;padding:20px;border-bottom:3px solid #31c2ad}header p,header .eyebrow{color:#19333f}header h1{font-size:30px}main{padding:0}section{break-inside:auto;box-shadow:none;border:0;padding:15px 0;margin:12px 0}details{break-inside:avoid}summary{list-style:none}.card{break-inside:avoid}a{color:inherit}h2,h3{break-after:avoid}footer{padding:10px}}</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">Total Quality · Ana · revisão 12 outubro 2026</div>
+<h1>Auditoria profunda · fluxos e conhecimento da Ana</h1>
+<p>18 achados com evidências, impacto, correção recomendada e critério de aceite. Avaliação técnica do estado coletado em 12/10/2026.</p>
+</header>
+<nav aria-label="Navegação do documento">
+<a href="#conclusao">Conclusão</a>
+<a href="#achados">Achados</a>
+<a href="#testes">Testes</a>
+<a href="#mudanca">Base aplicada</a>
+<a href="#plano">Prioridades</a>
+<a href="#documentos">Documentação</a>
+</nav>
+<main>
+<section id="conclusao">
+<h2>Conclusão da auditoria</h2>
+<p class="lead">A Ana tem uma base funcional de atendimento e controles úteis, mas precisa de correções na preservação de estado, confirmação de envio e sincronização da agenda antes de ampliar a automação.</p>
+<div class="grid">
+<div class="card">
+<span class="big">18</span>achados documentados</div>
+<div class="card">
+<span class="big">9</span>prioridades P1</div>
+<div class="card">
+<span class="big">8/8</span>riscos reproduzidos em testes locais</div>
+<div class="card">
+<span class="big">8/8</span>cenários de IA concluídos com JSON válido</div>
+</div>
+<div class="callout">
+<strong>O que foi realizado:</strong> auditoria de fluxos e documentação, manual HTML atualizado e módulo de clareza aplicado à base ativa. As demais correções são recomendações, não mudanças já implantadas.</div>
+</section>
+<section id="escopo">
+<h2>Como a auditoria foi feita</h2>
+<p>A auditoria leu 12 exports e suas conexões (125 nós), documentação existente no commit <code>4fbb7c1962fd2ecc6af02113f5fbc1ecc387efb9</code>, configuração ativa e definições de funções/triggers/views do banco. Os caminhos críticos de estado, preços, follow-up, auditoria, confirmação e resumo foram revisados.</p>
+<p>O escopo não é certificação jurídica, pentest, censo de todas as execuções nem teste de carga. Não foram inspecionados acesso ao servidor, proxy, versão instalada completa, configuração de filas, backups/restore, contratos com fornecedores ou todas as automações externas à Ana. Não foram enviados testes para pacientes.</p>
+<p>Exports podem representar a versão salva no editor; os estados ativo/publicado foram conferidos e a versão publicada da ANA-01 foi corroborada no histórico. Não foi feita comparação byte a byte entre versão publicada e rascunho de cada um dos 12 fluxos. Mudanças posteriores à coleta exigem nova conferência.</p>
+<p>
+<strong>Quatro níveis de evidência:</strong> parâmetro/SQL observado; comportamento reproduzido em teste local; resposta de IA em cenário sintético; hipótese de produção ainda não medida. Um teste que reproduz defeito confirma a necessidade de correção, não uma falha ocorrida com paciente.</p>
+</section>
+<section id="pontos">
+<h2>Controles que já ajudam a operação</h2>
+<ul>
+<li>Deduplicação de mensagens por índice único e consultas SQL parametrizadas em caminhos críticos.</li>
+<li>Histórico limitado a 12 mensagens e preservação de itens de raciocínio na continuação da ferramenta.</li>
+<li>Preços consultados em catálogo e proteção contra invenção de disponibilidade no contexto.</li>
+<li>Follow-up com limites diário/horário, exclusões por estado e dois contatos sem resposta; confirmação de véspera usa filtros específicos.</li>
+<li>Credenciais referenciadas por ambiente/credenciais n8n e opção store:false nas chamadas revisadas.</li>
+<li>Base de conhecimento editável no banco e relatório de auditoria com chave única por data.</li>
+</ul>
+</section>
+<section id="achados">
+<h2>Achados, evidências e critérios de aceite</h2>
+<div class="no-print">
+<label for="busca">Buscar por fluxo, problema ou ação</label>
+<input id="busca" type="search" placeholder="Ex.: agenda, consentimento, falha de IA">
+<label for="prioridade">Prioridade</label>
+<select id="prioridade">
+<option value="">Todas</option>
+<option>P1</option>
+<option>P2</option>
+</select> <button id="expandir">Abrir todos</button> <button id="imprimir">Imprimir / salvar PDF</button>
+</div>
+<p class="muted">P1: tratar antes de ampliar volume ou campanhas. P2: corrigir em ciclo planejado. Não foi atribuída uma certificação de conformidade ou segurança.</p>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A01 · Estado operacional pode ser sobrescrito pela resposta da IA</summary>
+<p class="muted">ANA-01 · Montar Payload / Extrair Resposta / Atualizar Lead; triggers de ana_leads</p>
+<p>
+<strong>Evidência:</strong> O contexto envia nome e resumo, mas não o objeto completo de agendamento, opt_out ou estado humano. Atualizar Lead substitui o JSON de agendamento e opt_out pelos valores produzidos pelo modelo. Os triggers conferidos marcam confirmabilidade e agendado_em; não preservam o estado anterior.</p>
+<p>
+<strong>Impacto:</strong> Uma nova conversa pode perder origem, hora ou metadados de uma confirmação da agenda, ou desfazer uma restrição que não foi apresentada ao modelo.</p>
+<p>
+<strong>Correção recomendada:</strong> Separar estado autorizado de interpretação da IA. Tornar opt-out persistente até consentimento explícito; manter agendamento em tabela própria e aplicar somente transições permitidas.</p>
+<p>
+<strong>Critério de aceite:</strong> Mensagem neutra após confirmação Google mantém event_id, origem, data, hora e consentimento. Estado não pode ser alterado por JSON inválido.</p>
+<p>
+<strong>Situação:</strong> Pendente · a regra do prompt ajuda a conduta, mas não substitui a proteção no banco.</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A02 · Entrega não confirmada pode ser registrada como atendimento realizado</summary>
+<p class="muted">ANA-01 · Salvar Resposta → Atualizar Lead → Enviar Mensagem; ANA-02; FU-US; BV-01</p>
+<p>
+<strong>Evidência:</strong> ANA-01 salva resposta e last_bot_msg_at antes do HTTP e continua pelo ramo normal após erro. ANA-02 usa (statusCode || 0) &gt;= 300: timeout sem status não entra na compensação (T04). FU-US registra envio após um HTTP com neverError sem IF de sucesso. BV-01 reserva o contato antes do HTTP, sem compensação.</p>
+<p>
+<strong>Impacto:</strong> Histórico, cadência e indicadores podem indicar resposta que não chegou; uma repetição manual pode duplicar uma entrega já aceita pelo provedor.</p>
+<p>
+<strong>Correção recomendada:</strong> Criar fila de saída com estados preparado/reservado/aceito/falhou/entrega_confirmada, identificador do provedor e chave idempotente. Aceitar apenas HTTP 2xx mais resposta válida. Tratar timeout como resultado indeterminado e reconciliar antes de repetir.</p>
+<p>
+<strong>Critério de aceite:</strong> Simular 200 válido, 200 com corpo inválido, 429, 500, timeout antes/depois do aceite e falha de banco após aceite; nenhum falso sucesso nem repetição cega.</p>
+<p>
+<strong>Situação:</strong> Pendente</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A03 · Follow-up não protege integralmente a pausa humana nem a concorrência</summary>
+<p class="muted">ana_claim_followups(); ana_confirmacoes_vespera(); ANA-01/02/06</p>
+<p>
+<strong>Evidência:</strong> ana_claim_followups filtra opt-out, escalado, agendamento e limites, mas não exige bot_ativo=true. A seleção do elegível não usa FOR UPDATE SKIP LOCKED e o UPDATE não revalida as condições. Os fluxos não releem o estado imediatamente antes de enviar. Confirmações de véspera também não filtram pausa/escalada.</p>
+<p>
+<strong>Impacto:</strong> Uma intervenção humana ou duas execuções sobrepostas podem disputar o mesmo contato. A existência de limites no banco não prova exclusão mútua entre todos os emissores.</p>
+<p>
+<strong>Correção recomendada:</strong> Centralizar elegibilidade, trava por contato e reserva atômica; revalidar consentimento, pausa, agendamento e versão do lead antes do envio. Definir quando um lembrete pode coexistir com atendimento humano.</p>
+<p>
+<strong>Critério de aceite:</strong> Duas execuções concorrentes reservam uma única saída. Opt-out ou tomada humana durante a espera cancela o envio pendente.</p>
+<p>
+<strong>Situação:</strong> Pendente · risco de concorrência por inspeção, sem teste de carga em produção.</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A04 · Boas-vindas do site passam fora do controle global de contato</summary>
+<p class="muted">BV-01 · Verificar/registrar contato e Selecionar novos e montar mensagem</p>
+<p>
+<strong>Evidência:</strong> A deduplicação usa uma tabela própria, sem consultar ana_leads.opt_out e sem a reserva global ana_envios_log. O código recorta os primeiros dez registros antes da consulta de já enviados; o teste com 21 linhas repete os primeiros dez e deixa zero novos na segunda rodada (T07).</p>
+<p>
+<strong>Impacto:</strong> Pode voltar a contatar quem pediu parada e impedir atendimento de leads mais recentes. O registro antecipado também pode bloquear permanentemente um envio que falhou.</p>
+<p>
+<strong>Correção recomendada:</strong> Consultar elegibilidade e envios confirmados antes do LIMIT; usar a fila compartilhada, carimbo de consentimento/origem e estado de tentativa. Reavaliar boas-vindas noturnas e fins de semana com a operação.</p>
+<p>
+<strong>Critério de aceite:</strong> 21 entradas válidas avançam em lotes sem repetição; um opt-out anterior é excluído; timeout não se torna entrega definitiva.</p>
+<p>
+<strong>Situação:</strong> Pendente</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A05 · Agenda perde identidade do evento e pode ignorar cancelamentos</summary>
+<p class="muted">ANA-05 · Extrair telefone e horario / Atualizar ana_leads</p>
+<p>
+<strong>Evidência:</strong> O parser produz event_id, mas o UPSERT não o grava. Cancelamentos que contêm só id/status são descartados por falta de telefone/data (T05), situação prevista na API do Google. Um único objeto agendamento por telefone é substituído por cada evento.</p>
+<p>
+<strong>Impacto:</strong> Cancelamento pode deixar uma confirmação antiga; vários exames ou familiares no mesmo WhatsApp disputam o mesmo registro.</p>
+<p>
+<strong>Correção recomendada:</strong> Persistir calendar_id + event_id + paciente/contato + updated. Processar exclusão pela chave estável, mesmo sem descrição. Derivar a próxima consulta de uma coleção de eventos e preservar histórico.</p>
+<p>
+<strong>Critério de aceite:</strong> Criar dois eventos fictícios para um contato; atualizar um e cancelar o outro só por id. Apenas o evento correto muda.</p>
+<p>
+<strong>Situação:</strong> Pendente</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A06 · A reconciliação de 60 dias está configurada para uma semana</summary>
+<p class="muted">ANA-05 · Ler agenda completa (60 dias), export e formulário Parameters</p>
+<p>
+<strong>Evidência:</strong> O export não define timeMin/timeMax. Na interface da instância, After resolve para $now e Before para $now.plus({ week: 1 }). O nome e a nota de 60 dias não correspondem aos parâmetros efetivos. O incremental usa updatedMin de 30 minutos, sem cursor persistido.</p>
+<p>
+<strong>Impacto:</strong> Eventos fora da semana não entram nessa reconciliação. Indisponibilidade superior à janela incremental pode perder mudanças até alguma reconciliação que realmente as cubra.</p>
+<p>
+<strong>Correção recomendada:</strong> Definir explicitamente a janela aprovada, paginação e política de eventos passados/cancelados. Usar cursor incremental persistente ou janela com reconciliação comprovada, incluindo tratamento de cursor expirado.</p>
+<p>
+<strong>Critério de aceite:</strong> Evento fictício em D+45 aparece no escopo de 60 dias; alteração feita durante interrupção é recuperada. Conferir parâmetros efetivos após publicação.</p>
+<p>
+<strong>Situação:</strong> Pendente · janela de uma semana confirmada na interface.</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A07 · Escalada registrada não equivale a aviso recebido pela equipe</summary>
+<p class="muted">ANA-01 · Extrair Resposta / Escalar? / Notificar Supervisor</p>
+<p>
+<strong>Evidência:</strong> O IF só avisa motivos que casam com uma expressão de emergência, conflito, privacidade ou agendamento. O motivo padrão de falha de IA não casa com esse filtro e não pausa o bot (T03). Motivos de preço ou preparo pendente também podem ficar apenas no banco. O HTTP de aviso continua em caso de erro.</p>
+<p>
+<strong>Impacto:</strong> A Ana pode dizer que haverá retorno sem que a equipe tenha recebido uma tarefa utilizável.</p>
+<p>
+<strong>Correção recomendada:</strong> Criar tarefa de recepção com identificador, responsável, prazo e aceite. Notificar toda escalada pelo roteamento explícito de categoria, deduplicando alertas, e monitorar falha da notificação.</p>
+<p>
+<strong>Critério de aceite:</strong> Falha de IA, preço ausente e preparo pendente criam tarefa verificável; retorno prometido só quando existe compromisso real.</p>
+<p>
+<strong>Situação:</strong> Parcial · módulo de clareza restringe promessas; roteamento técnico permanece pendente.</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A08 · Bloco DADOS não tem validação de esquema antes de alterar o lead</summary>
+<p class="muted">ANA-01 · Extrair Resposta</p>
+<p>
+<strong>Evidência:</strong> JSON.parse falho é ignorado; a mera presença do marcador é tratada como resposta válida. Booleano string false vira true pelo operador !! (T02). Marcador com JSON inválido gera silêncio sem escalada (T01). Enums e campos obrigatórios não são validados por esquema.</p>
+<p>
+<strong>Impacto:</strong> Falhas de saída do modelo podem virar mudanças comerciais ou de consentimento sem erro visível.</p>
+<p>
+<strong>Correção recomendada:</strong> Validar todos os tipos, enums, limites e campos obrigatórios; impedir escrita de estado em saída inválida. Preferir saída estruturada e manter separação entre texto ao paciente e dados, com fallback seguro.</p>
+<p>
+<strong>Critério de aceite:</strong> JSON truncado, enum desconhecido, booleano string, texto vazio e silêncio contratual válido têm caminhos diferentes e testados.</p>
+<p>
+<strong>Situação:</strong> Pendente · instruções reforçadas no prompt não substituem validação de código.</p>
+</details>
+<details class="achado" data-prioridade="P1">
+<summary>
+<span class="pill P1">P1</span> A09 · Minimização de dados na auditoria está descrita de forma excessiva</summary>
+<p class="muted">ANA-04 · ana_auditoria_conversas() / Montar Auditoria; docs de segurança e changelog</p>
+<p>
+<strong>Evidência:</strong> O payload omite o campo phone ao montar o texto, mas mantém primeiro nome e transcrição livre. A função SQL recorta o texto sem remover telefones, documentos, nomes ou outros identificadores presentes no conteúdo. Pedir ao modelo que não exponha telefone na resposta não anonimiza sua entrada.</p>
+<p>
+<strong>Impacto:</strong> O relatório/documentação pode dar falsa segurança sobre a informação enviada ao modelo e conservada nas execuções.</p>
+<p>
+<strong>Correção recomendada:</strong> Aplicar minimização determinística antes da chamada, usar identificadores de caso e testar falsos negativos com dados sintéticos. Definir retenção e acesso em n8n, banco e provedor; não publicar transcrições nem exportações brutas.</p>
+<p>
+<strong>Critério de aceite:</strong> Fixtures com telefone, e-mail e documento não aparecem no payload; cobertura e limitações da redação são registradas. Revisão jurídica de finalidade é independente desta auditoria técnica.</p>
+<p>
+<strong>Situação:</strong> Documentação corrigida; tratamento automático de conteúdo pendente.</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A10 · Resposta de ferramenta atende apenas a primeira chamada</summary>
+<p class="muted">ANA-01 · Preparar Consulta / Enviar Preços à Ana</p>
+<p>
+<strong>Evidência:</strong> O primeiro function_call é selecionado, mas todos os function_call voltam no input seguinte com apenas um function_call_output. O teste com duas chamadas reproduziu a lacuna (T08). A primeira requisição não fixa parallel_tool_calls=false.</p>
+<p>
+<strong>Impacto:</strong> Uma resposta válida do modelo com múltiplas chamadas pode provocar erro na continuação; a frequência real não foi medida.</p>
+<p>
+<strong>Correção recomendada:</strong> Processar todas as chamadas e responder cada call_id, com validação dos argumentos e limites; alternativamente restringir explicitamente a uma chamada e verificar essa garantia.</p>
+<p>
+<strong>Critério de aceite:</strong> Zero, uma e duas chamadas, argumentos inválidos e ausência parcial de preço passam por testes com correspondência um a um de call_id.</p>
+<p>
+<strong>Situação:</strong> Pendente</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A11 · Planilha legada é apagada antes de consultar e repor os dados</summary>
+<p class="muted">ANA-07 · clear → consulta → append</p>
+<p>
+<strong>Evidência:</strong> O fluxo ativo a cada 30 minutos limpa a aba antes de ler a view e fazer append. Não há estágio intermediário, reversão ou validação de contagem. O destino é diferente da planilha do site usada pela integração mais recente.</p>
+<p>
+<strong>Impacto:</strong> Falha de consulta/rede deixa aba vazia ou parcial; dois destinos com nomes parecidos podem confundir a gestão.</p>
+<p>
+<strong>Correção recomendada:</strong> Ler e validar antes de escrever, usar atualização em lote/aba de estágio com troca controlada e definir qual planilha é a oficial. Conferir os consumidores antes de desativar o fluxo antigo.</p>
+<p>
+<strong>Critério de aceite:</strong> Falha simulada preserva a última versão completa; contagem, chaves e destino ficam registrados.</p>
+<p>
+<strong>Situação:</strong> Pendente</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A12 · Prompt acumulou regras conflitantes e promessas sem fonte</summary>
+<p class="muted">ana_config.system_prompt anterior à mudança, 52.932 caracteres</p>
+<p>
+<strong>Evidência:</strong> Há bloco de economia de turnos duplicado; obrigação de sempre perguntar versus permitir silêncio; preço consultado versus valores fixos; prazo genérico versus exemplos de 24 horas; política sem pedido versus frase que exige pedido; consultas disponíveis versus identidade de clínica exclusiva de exames. Preparo oficial está como placeholder.</p>
+<p>
+<strong>Impacto:</strong> Maior custo de contexto e comportamento inconsistente, principalmente em orçamento, disponibilidade e encaminhamento.</p>
+<p>
+<strong>Correção recomendada:</strong> Aplicar precedência de clareza e consolidar posteriormente os fatos em fontes operacionais únicas com responsável e validade. Não escolher uma regra comercial conflitante sem confirmação da clínica.</p>
+<p>
+<strong>Critério de aceite:</strong> Cenários de orçamento, encerramento, convênio, agenda, resultado, preparo e tentativa de alterar instruções preservam fatos e contrato.</p>
+<p>
+<strong>Situação:</strong> Parcial · módulo prioritário aplicado e testado; consolidação integral da base factual permanece pendente.</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A13 · Auditoria diária é uma amostra limitada e pode repetir o mesmo dia</summary>
+<p class="muted">ANA-04; ana_auditoria_conversas(); Montar Auditoria</p>
+<p>
+<strong>Evidência:</strong> A função escolhe o dia mais recente com mensagens nos sete dias anteriores. Ordena por phone, limita 80 mensagens por contato; o fluxo usa até 40 conversas, 6.000 caracteres por conversa e orçamento de 100 mil caracteres, ao qual ainda acrescenta instruções/relatório anterior. A nota é extraída de texto livre.</p>
+<p>
+<strong>Impacto:</strong> Não representa todas as conversas nem permite comparar notas como KPI calibrado. Dias sem movimento podem reavaliar o mesmo recorte e reescrever a mesma data.</p>
+<p>
+<strong>Correção recomendada:</strong> Registrar total elegível, total auditado, recorte e critérios; amostragem estratificada e casos críticos; data/versão idempotente; rubrica estruturada com revisão humana e limite final de tokens.</p>
+<p>
+<strong>Critério de aceite:</strong> Relatório informa denominadores e exclusões, não mistura data da execução com data avaliada e não apresenta nota de IA como verdade absoluta.</p>
+<p>
+<strong>Situação:</strong> Pendente</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A14 · Métricas de orçamento e custo precisam de definições reproduzíveis</summary>
+<p class="muted">ana_resumo_diario(); ana_snapshot_funil(); docs/CUSTOS_E_DESEMPENHO.md</p>
+<p>
+<strong>Evidência:</strong> O resumo recalcula valor com catálogo atual e busca aproximada, não com preço efetivamente apresentado/aceito. A soma por exame pode duplicar variantes de um mesmo item. A categoria residual inclui serviços não mapeados como Laboratorial. A fórmula antiga soma input total e cached input novamente.</p>
+<p>
+<strong>Impacto:</strong> Valor orçado não é faturamento; Agendou não comprova pagamento ou comparecimento; custo estimado pode contar cache duas vezes.</p>
+<p>
+<strong>Correção recomendada:</strong> Persistir orçamento com versão/preço na origem; separar contatos, itens, pedidos, agendamentos, comparecimentos e receita. Calcular custo com input sem cache = input total − cached input e tabela de preços verificada por modelo/data.</p>
+<p>
+<strong>Critério de aceite:</strong> Mesma coorte e versão de catálogo reproduzem o resultado; custo concilia com usage/fatura. Não publicar retorno financeiro sem receita atribuível.</p>
+<p>
+<strong>Situação:</strong> Fórmula e definições documentais corrigidas; instrumentação pendente.</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A15 · Parser de agenda e lembretes ainda dependem de texto livre</summary>
+<p class="muted">ANA-05 parser; ANA-06 template; funções de confirmabilidade</p>
+<p>
+<strong>Evidência:</strong> Minuto 99 no título é aceito (T06); evento de dia inteiro ganha 08:00 por padrão; vários telefones são resolvidos por prioridade sem fila de ambiguidade. Regex de exame/cancelamento não é catálogo operacional. Na ANA-06, nó chamado Esperar 20s está em 90 segundos.</p>
+<p>
+<strong>Impacto:</strong> Cadastro ambíguo pode produzir horário ou destinatário incorreto. Um título de exame reconhecível não prova serviço disponível nem preparo validado.</p>
+<p>
+<strong>Correção recomendada:</strong> Campos estruturados no evento, validação de data/hora, vínculo paciente-contato e fila de revisão para ambiguidades; não inventar horário em evento sem hora. Alinhar nomes dos nós aos parâmetros.</p>
+<p>
+<strong>Critério de aceite:</strong> Hora inválida, evento de dia inteiro, dois telefones e título sem exame ficam em revisão e não geram lembrete indevido.</p>
+<p>
+<strong>Situação:</strong> Pendente</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A16 · Monitoramento precisa medir falhas de negócio e não só execução verde</summary>
+<p class="muted">12 exports; histórico visível ANA-01; configurações do fluxo auxiliar</p>
+<p>
+<strong>Evidência:</strong> Há nós que continuam após erro e não há errorWorkflow explícito nos exports revisados. O filtro Error da ANA-01 não encontrou execuções no histórico disponível, enquanto os testes mostram falhas que podem terminar com sucesso. Isso não mede entrega, resposta útil ou retorno humano.</p>
+<p>
+<strong>Impacto:</strong> Uma operação aparentemente saudável pode acumular mensagens não entregues e solicitações sem responsável.</p>
+<p>
+<strong>Correção recomendada:</strong> Alertas de saída sem aceite, escalada sem aceite, fila vencida elegível, falha de sincronização e modelo inválido. Definir retenção mínima necessária e expurgo verificado; manter logs técnicos sem conteúdo clínico quando possível.</p>
+<p>
+<strong>Critério de aceite:</strong> Cada cenário de falha gera sinal operacional e responsável; taxa tem janela e denominador explícitos.</p>
+<p>
+<strong>Situação:</strong> Pendente · retenção global, infraestrutura, backups e restore não foram auditados no servidor.</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A17 · Autenticação de entrada e fronteiras de confiança precisam de comprovação</summary>
+<p class="muted">ANA-01 · Webhook Evolution / Filtrar Eventos; ADS-01</p>
+<p>
+<strong>Evidência:</strong> Não há autenticação explícita nem verificação de assinatura/instância no caminho de entrada exportado da ANA-01. Controles de proxy não foram inspecionados. O capturador público ADS usa CORS e validações, que não equivalem a autenticação. URLs de origem podem carregar parâmetros excessivos.</p>
+<p>
+<strong>Impacto:</strong> A origem confiável do evento precisa ser garantida antes de escrever estado ou chamar a IA; controles fora do fluxo podem existir, mas não estão documentados.</p>
+<p>
+<strong>Correção recomendada:</strong> Comprovar proteção no ingresso, assinatura/segredo ou allowlist apropriada, rate limit e validação de instância/JID. Registrar arquitetura sem revelar endpoints secretos. Minimizar parâmetros de URL de atribuição.</p>
+<p>
+<strong>Critério de aceite:</strong> Em homologação, eventos sem autenticação, de outra instância ou inválidos são rejeitados; documentação aponta o controle e seu responsável.</p>
+<p>
+<strong>Situação:</strong> Verificação de infraestrutura pendente; não foi realizado teste ofensivo em produção.</p>
+</details>
+<details class="achado" data-prioridade="P2">
+<summary>
+<span class="pill P2">P2</span> A18 · Manual antigo não descreve o sistema que está rodando</summary>
+<p class="muted">README, ARQUITETURA, FLUXOS, RUNBOOK, CUSTOS, SEGURANCA e auditoria de 27/08</p>
+<p>
+<strong>Evidência:</strong> ANA-02 atual é determinística, sem IA. ANA-04 roda à meia-noite, não às 07h10. Faltavam ANA-05 operacional, ANA-06, ANA-07, BV-01, ADS-01 e FU-US. Os dois diagnósticos leem até 250 eventos por resposta sem seguir nextPageToken, portanto sua cobertura não é censo garantido.</p>
+<p>
+<strong>Impacto:</strong> Manutenção baseada no texto antigo pode mudar o componente errado, subestimar riscos ou interpretar um diagnóstico parcial como cobertura integral.</p>
+<p>
+<strong>Correção recomendada:</strong> Usar manual HTML versionado, inventário com hashes e status, matriz de fontes, critérios de teste e rollback. Manter a auditoria antiga como registro histórico explicitamente datado.</p>
+<p>
+<strong>Critério de aceite:</strong> Todo fluxo do escopo está catalogado, horários vêm dos parâmetros e cada conclusão distingue observado, reproduzido e não verificado.</p>
+<p>
+<strong>Situação:</strong> Documentação revisada e versionada nesta revisão; as demais correções seguem os achados específicos.</p>
+</details>
+</section>
+<section id="testes">
+<h2>Validação sem pacientes</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Caso</th>
+<th scope="col">Comportamento reproduzido</th>
+<th scope="col">Evidência</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T01</td>
+<td>Marcador com JSON inválido é aceito como silêncio normal</td>
+<td>Sem mensagem, sem escalada; followup_due calculado apesar do JSON inválido.</td>
+</tr>
+<tr>
+<td>T02</td>
+<td>Booleano string false altera opt-out</td>
+<td>opt_out=&quot;false&quot; foi convertido em true pelo operador !!.</td>
+</tr>
+<tr>
+<td>T03</td>
+<td>Falha de IA não aciona o filtro de notificação do supervisor</td>
+<td>Registro escalado=true, mas motivo padrão não passa na expressão Escalar? e não pausa o bot.</td>
+</tr>
+<tr>
+<td>T04</td>
+<td>Erro de transporte pode passar pelo ramo de sucesso do follow-up</td>
+<td>timeout sem statusCode: teste &gt;=300 retorna false; HTTP 500 retorna true.</td>
+</tr>
+<tr>
+<td>T05</td>
+<td>Cancelamento sem telefone/data é descartado no parser de agenda</td>
+<td>Evento cancelado contendo somente id/status gera zero itens para reconciliação.</td>
+</tr>
+<tr>
+<td>T06</td>
+<td>Minuto inválido no título é aceito</td>
+<td>Título 10:99 prevaleceu sobre o bloco 10:00.</td>
+</tr>
+<tr>
+<td>T07</td>
+<td>Primeiras dez linhas bloqueiam novos contatos posteriores</td>
+<td>21 linhas elegíveis: rodada 1 seleciona 10; rodada 2 repete as mesmas 10. Após deduplicação no banco, zero novos itens.</td>
+</tr>
+<tr>
+<td>T08</td>
+<td>Duas chamadas de ferramenta recebem só uma resposta</td>
+<td>Dois call_id encaminhados, somente um function_call_output produzido.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Validação do módulo de conhecimento</h3>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Caso</th>
+<th scope="col">Cenário sintético</th>
+<th scope="col">Resultado observado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C01</td>
+<td>Encerramento</td>
+<td>JSON válido; opt_out=false, escalar=false, próxima ação=encerrar</td>
+</tr>
+<tr>
+<td>C02</td>
+<td>Agendamento sem agenda disponível</td>
+<td>JSON válido; opt_out=false, escalar=true, próxima ação=escalar</td>
+</tr>
+<tr>
+<td>C03</td>
+<td>Opt-out explícito</td>
+<td>JSON válido; opt_out=true, escalar=false, próxima ação=encerrar</td>
+</tr>
+<tr>
+<td>C04</td>
+<td>Convênio</td>
+<td>JSON válido; opt_out=false, escalar=false, próxima ação=aguardar_resposta</td>
+</tr>
+<tr>
+<td>C05</td>
+<td>Resultado após exame</td>
+<td>JSON válido; opt_out=false, escalar=true, próxima ação=escalar</td>
+</tr>
+<tr>
+<td>C06</td>
+<td>Tentativa de alterar instruções</td>
+<td>JSON válido; opt_out=false, escalar=true, próxima ação=escalar</td>
+</tr>
+<tr>
+<td>C07</td>
+<td>Orçamento parcial</td>
+<td>JSON válido; opt_out=false, escalar=true, próxima ação=escalar</td>
+</tr>
+<tr>
+<td>C08</td>
+<td>Preparo sem fonte</td>
+<td>JSON válido; opt_out=false, escalar=true, próxima ação=escalar</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Oito chamadas isoladas ao mesmo modelo da ANA-01, com prompt candidato e dados fictícios; ferramenta de preço simulada no orçamento parcial. Nenhum WhatsApp ou atualização de lead ocorreu nesses testes. São verificações pontuais: não demonstram taxa de acerto, ganho de conversão nem desempenho futuro garantido. A data no JSON ainda variou de formato entre cenários, reforçando a necessidade de validação estrutural.</p>
+</section>
+<section id="mudanca">
+<h2>Mudança aplicada na base de conhecimento</h2>
+<blockquote>“O cliente quer clareza para dar o próximo passo.”</blockquote>
+<p>Responder à intenção declarada, explicar o que está confirmado e o que está pendente, e indicar uma ação possível. Conversão saudável depende de informação confiável, entrega e encaminhamento concluído.</p>
+<div class="callout">
+<strong>Aplicado em 12/10/2026, 10:28:42 (São Paulo).</strong> Uma linha de <code>ana_config.system_prompt</code> foi atualizada; leitura independente confirmou o hash esperado, um único módulo e backup válido.</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Item</th>
+<th scope="col">Registro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versão</td>
+<td>Clareza V1 · 2026-10-12</td>
+</tr>
+<tr>
+<td>SHA-256 do módulo</td>
+<td>
+<code>79cbb53251482d35d161caaed65ea0b4ae6f224511d94351fde94303e3d9b6b0</code>
+</td>
+</tr>
+<tr>
+<td>Backup no banco</td>
+<td>
+<code>system_prompt_backup_2026_10_12_clareza_v1</code>
+</td>
+</tr>
+<tr>
+<td>Hash MD5 anterior → novo</td>
+<td>
+<code>4e00e96b6199a7dc3b3328da9ec1fae9</code> → <code>acf7ec1151a1604421785b987bb4ff22</code> (controle de concorrência, não assinatura de segurança)</td>
+</tr>
+<tr>
+<td>Tamanho</td>
+<td>52.932 → 59.554 caracteres. O acréscimo de 6.622 inclui módulo e separador; consolidar duplicações em revisão posterior.</td>
+</tr>
+<tr>
+<td>Alcance</td>
+<td>ANA-01 lê o prompt a cada turno. Textos fixos de ANA-02, ANA-06 e BV-01, prompt próprio de ANA-04 e lógica SQL não foram alterados.</td>
+</tr>
+<tr>
+<td>Não alterado por esta implantação</td>
+<td>Preços, horários, catálogo, preparos, regras SQL, agendas, cadências e destino dos envios.</td>
+</tr>
+<tr>
+<td>Fluxo auxiliar</td>
+<td>Rascunho manual de verificação, sem gatilho agendado/WhatsApp e sem retenção de dados de execução; não publicado.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="plano">
+<h2>Plano de correção priorizado</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Ordem</th>
+<th scope="col">Trabalho</th>
+<th scope="col">Responsável proposto</th>
+<th scope="col">Saída verificável</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 · antes de ampliar envios</td>
+<td>Estado protegido, opt-out global, fila de saída e confirmação de aceite (A01–A04, A08).</td>
+<td>Engenharia n8n / banco</td>
+<td>Testes de concorrência e erro sem destinatário real; logs por tentativa.</td>
+</tr>
+<tr>
+<td>2 · agenda e atendimento humano</td>
+<td>Identidade dos eventos, janela efetiva, validação de hora e tarefa de recepção (A05–A07, A15).</td>
+<td>Engenharia + recepção</td>
+<td>Cancelamento por id funciona; cada pendência tem responsável.</td>
+</tr>
+<tr>
+<td>3 · qualidade e privacidade</td>
+<td>Minimização, amostra de auditoria, ferramentas, planilhas e observabilidade (A09–A11, A13, A16–A17).</td>
+<td>Engenharia + responsável por dados</td>
+<td>Payload minimizado, cobertura registrada, sincronização resiliente.</td>
+</tr>
+<tr>
+<td>4 · base única e mensuração</td>
+<td>Consolidar prompt/fatos, orçamento versionado, custo e manutenção documental (A12, A14, A18).</td>
+<td>Operação + gestão + mantenedor</td>
+<td>Fatos sem divergência, indicadores reproduzíveis e relatório HTML semanal.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="documentos">
+<h2>Auditoria da documentação anterior</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th scope="col">Antes</th>
+<th scope="col">Estado observado / correção documental</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ANA-02 usa IA, com 600 tokens</td>
+<td>Texto fixo; removida a atribuição de custo por chamada de IA a este fluxo.</td>
+</tr>
+<tr>
+<td>ANA-04 às 07h10</td>
+<td>Gatilho diário à meia-noite no fuso de São Paulo.</td>
+</tr>
+<tr>
+<td>ANA-05 apenas diagnósticos</td>
+<td>Incluídos sincronizador operacional e fluxos 06/07/site/captura/manual.</td>
+</tr>
+<tr>
+<td>Telefone removido da auditoria</td>
+<td>Campo de telefone omitido não elimina identificadores do texto livre.</td>
+</tr>
+<tr>
+<td>Tarifas fixas e input + cache</td>
+<td>Tarifas não verificadas removidas como referência atual; fórmula corrigida sem dupla contagem.</td>
+</tr>
+<tr>
+<td>Relatório semanal Markdown</td>
+<td>Novo modelo HTML; registro histórico de agosto preservado e explicitamente datado.</td>
+</tr>
+<tr>
+<td>Mudar manual muda a Ana</td>
+<td>Documentado: GitHub, prompt no banco e publicação de workflow são três etapas diferentes.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="fontes">
+<h2>Fontes e verificação</h2>
+<ul>
+<li>
+<a href="https://github.com/alexwaltersdorf/N8N---Total-Quality-WhatsApp">Repositório da Ana</a> — documentação anterior e destino da atualização.</li>
+<li>
+<a href="https://developers.google.com/workspace/calendar/api/v3/reference/events">Google Calendar: eventos</a> — cancelamentos podem manter somente a identidade do evento.</li>
+<li>
+<a href="https://developers.google.com/workspace/calendar/api/v3/reference/events/list">Google Calendar: listagem e sincronização</a> — paginação, limites temporais e cursor incremental.</li>
+<li>
+<a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI: function calling</a> — respostas para cada chamada de ferramenta.</li>
+<li>
+<a href="https://github.com/n8n-io/n8n/blob/master/packages/nodes-base/nodes/Google/Calendar/GoogleCalendar.node.ts">n8n: implementação do Google Calendar</a> — referência técnica; a janela concreta foi conferida na interface instalada.</li>
+<li>
+<a href="https://blog.n8n.io/best-practices-for-deploying-ai-agents-in-production/">n8n: testes, monitoramento e produção</a> — recomendações de operação.</li>
+</ul>
+<p>Referências consultadas em 12/10/2026. Achados específicos são baseados no ambiente auditado, não em presunção a partir da documentação externa. Evidências brutas permanecem fora do repositório público.</p>
+</section>
+</main>
+<footer>Documento versionado · 12/10/2026 · Horários em America/Sao_Paulo · sem recursos externos ou rastreadores.</footer>
+<script>function filtrar(){const q=(document.getElementById('busca')?.value||'').toLocaleLowerCase('pt-BR');const p=document.getElementById('prioridade')?.value||'';document.querySelectorAll('.achado').forEach(d=>{d.classList.toggle('hidden',!d.textContent.toLocaleLowerCase('pt-BR').includes(q)||(p&&d.dataset.prioridade!==p))})}document.getElementById('busca')?.addEventListener('input',filtrar);document.getElementById('prioridade')?.addEventListener('change',filtrar);document.getElementById('expandir')?.addEventListener('click',()=>document.querySelectorAll('details').forEach(d=>d.open=true));document.getElementById('imprimir')?.addEventListener('click',()=>{document.querySelectorAll('details').forEach(d=>d.open=true);window.print()});</script>
+</body>
+</html>
