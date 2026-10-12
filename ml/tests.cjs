@@ -21,4 +21,20 @@ test('duas linhas com a mesma unidade são rejeitadas',()=>assert.throws(()=>ml.
 test('NaN e strings numéricas são rejeitados',()=>{assert.throws(()=>ml.run({...input,sessions:[{...session(0),user_count:NaN}]}),/Feature/);assert.throws(()=>ml.run({...input,sessions:[{...session(0),user_count:'2'}]}),/Feature/);});
 test('HTML escapa conteúdo livre',()=>{const x=ml.html({...trained.summary,retraining_note:'<script>alert(1)</script>'});assert(!x.includes('<script>'));assert(x.includes('&lt;script&gt;'));});
 test('modelo com escala inválida é rejeitado',()=>assert.equal(ml.validModel({...trained.model,scaler:{center:[],scale:[]}}),false));
+const {aggregateDemand,dashboardHTML}=require('./dashboard.cjs');
+const demand={date_min:'2026-10-01',date_max:'2026-10-03',dictionary_size:3,as_of:'2026-10-03T12:00:00Z',rows:[
+ {date:'2026-10-01',source:'mensagem_cliente',level:'category',kind:'Exame',service:'Laboratorial',category:'Laboratorial',count:2},
+ {date:'2026-10-03',source:'mensagem_cliente',level:'category',kind:'Consulta',service:'Clínica geral',category:'Clínica geral',count:3},
+ {date:'2026-10-01',source:'estrutura_ana',level:'category',kind:'Exame',service:'Laboratorial',category:'Laboratorial',count:9},
+ {date:'2026-10-01',source:'mensagem_cliente',level:'service',kind:'Exame',service:'Hemograma',category:'Laboratorial',count:2},
+ {date:'2026-10-01',source:'mensagem_cliente',level:'service',kind:'Exame',service:'TGO / AST',category:'Laboratorial',count:2}
+],coverage:[]};
+const df={from:demand.date_min,to:demand.date_max,source:'mensagem_cliente'};
+test('datas inclusivas e dias sem procura',()=>{const r=aggregateDemand(demand,df);assert.equal(r.total,5);assert.deepEqual(r.series.map(x=>x.count),[2,0,3]);});
+test('fontes alternativas não se somam',()=>assert.equal(aggregateDemand(demand,{...df,source:'estrutura_ana'}).total,9));
+test('Laboratorial usa categoria deduplicada e preserva detalhes',()=>{assert.equal(aggregateDemand(demand,{...df,kind:'Exame'}).total,2);assert.equal(aggregateDemand(demand,{...df,level:'service',query:'Laboratorial'}).total,4);});
+test('busca ignora acentos e filtro Consulta não mistura exames',()=>{const r=aggregateDemand(demand,{...df,kind:'Consulta',query:'clinica'});assert.equal(r.total,3);assert.equal(r.exams,0);});
+test('período invertido rejeitado e vazio não inventa dados',()=>{assert(aggregateDemand(demand,{...df,from:'2026-10-04'}).error);assert.equal(aggregateDemand(demand,{...df,from:'2026-10-02',to:'2026-10-02'}).total,0);});
+test('dashboard não permite fechar script via dados',()=>{const h=dashboardHTML({...demand,rows:[{...demand.rows[0],service:'</script><img src=x onerror=alert(1)>'}]});assert(!h.includes('</script><img'));assert(h.includes('\\u003c/script>'));});
+test('código n8n incorpora dashboard funcional no relatório',()=>{const fs=require('node:fs'),vm=require('node:vm');const w=JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'workflow-ana-ml.json'),'utf8'));const code=w.nodes.find(n=>n.name==='Treinar e pontuar ML').parameters.jsCode;const result=vm.runInNewContext('(function(){'+code+'})()',{$input:{first:()=>({json:{dataset:{...input,demand}}})}});assert(result[0].json.report_html.includes('id="ana-demand"'));assert(result[0].json.report_html.includes('Laboratorial'));});
 console.log(JSON.stringify({passed,model_k:trained.model.k,train_silhouette:trained.model.train_silhouette,holdout_silhouette:trained.model.holdout_silhouette}));
