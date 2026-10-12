@@ -1,0 +1,11 @@
+# Conteúdo restrito não deve ser publicado
+.env
+.env.*
+!.env.example
+raw/
+exports/
+work/
+logs/
+*credentials*.json
+*pinData*.json
+*.pem
