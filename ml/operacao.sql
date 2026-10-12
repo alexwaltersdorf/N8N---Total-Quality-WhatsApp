@@ -10,7 +10,9 @@ SELECT jsonb_build_object(
  'ultima_coleta',(SELECT max(collected_at) FROM ana_ml.runs),
  'ultima_summary',(SELECT summary FROM ana_ml.runs ORDER BY collected_at DESC LIMIT 1),
  'rotulos_humanos',(SELECT count(*) FROM ana_ml.labels),
- 'html_valido',(SELECT report_html LIKE '<!doctype html>%' FROM ana_ml.runs ORDER BY collected_at DESC LIMIT 1)
+ 'html_valido',(SELECT report_html LIKE '<!doctype html>%' FROM ana_ml.runs ORDER BY collected_at DESC LIMIT 1),
+ 'dashboard_presente',(SELECT position('id="ana-demand"' in report_html)>0 FROM ana_ml.runs ORDER BY collected_at DESC LIMIT 1),
+ 'laboratorial_presente',(SELECT position('Laboratorial' in report_html)>0 FROM ana_ml.runs ORDER BY collected_at DESC LIMIT 1)
 ) AS resultado;
 
 SELECT jsonb_build_object(
