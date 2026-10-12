@@ -1,0 +1,102 @@
+{
+  "coleta": "2026-10-12",
+  "escopo": "12 fluxos exportados; hashes dos arquivos locais da coleta, não credenciais",
+  "fluxos": [
+    {
+      "name": "ANA — 01 Atendimento WhatsApp (Total Quality)",
+      "id": "XRUqhdO1QCyBBHbf",
+      "active": true,
+      "versionId": "07387b2d-f14a-450c-a015-ac41a2249985",
+      "sha256": "6f1dd84e7a176b42e5b30820cd6336ca4308d3d2bf75495fafdaaa5711e80198",
+      "nodes": 48
+    },
+    {
+      "name": "ANA — 02 Follow-up Carinhoso (Total Quality)",
+      "id": "Z0iuQURxQ4MvGZTT",
+      "active": true,
+      "versionId": "9abccf4b-2451-406c-987d-e9fd337a4767",
+      "sha256": "d071bdb6d5f3f29fe3d822e22b5eb700501f80a7595dd8ef212ca2d36f69e736",
+      "nodes": 12
+    },
+    {
+      "name": "ANA — 03 Resumo Diário (WhatsApp)",
+      "id": "MJXKG1KvNPNA30b2",
+      "active": true,
+      "versionId": "151671d5-bb56-43e5-b960-137b4930ba0f",
+      "sha256": "20f39dee6101e32557d56e9d38c4e495c0ca165f1638763f0f850a51694b0cb3",
+      "nodes": 4
+    },
+    {
+      "name": "ANA — 04 Auditoria de Atendimento (IA)",
+      "id": "wX92vCvWPEOheINW",
+      "active": true,
+      "versionId": "51312e98-30ad-47e3-8bf8-0fce1cd49a0d",
+      "sha256": "d621dbab1836223c4201e76b31e7b3103ac629fef9ee0d0e034b784754aa56f4",
+      "nodes": 10
+    },
+    {
+      "name": "ANA-05 - Sincronizar Agendamentos do Google Agenda (v4.1)",
+      "id": "TKYoyHYWEefcCB9I",
+      "active": true,
+      "versionId": "ebeb19ce-b53d-40f6-a644-a11207cbbe90",
+      "sha256": "353741cae2720dbd4c560db22b109ce4314d1d0e506a1ef5784d293be46ebb9f",
+      "nodes": 6
+    },
+    {
+      "name": "ANA-06 - Confirmacao de exame na vespera (09:00)",
+      "id": "UEbCnaDY9c5GbLeR",
+      "active": true,
+      "versionId": "dd3daee5-a523-414c-9072-6da35cf4aa9b",
+      "sha256": "5cd73d29ee5071c00640cac83917cf56afb2c64230caf96a69e1f9da3a5e6fa1",
+      "nodes": 9
+    },
+    {
+      "name": "ANA-07 - Planilha de leads (a cada 30 min)",
+      "id": "tMNwQHaQ2tJDSC99",
+      "active": true,
+      "versionId": "77bc097a-bd87-405b-975c-6b1f5dc35c94",
+      "sha256": "722f7b37b31b419c371dfc1d9b699e5fa2c0bc063f3e7b4fe01e9000017e6409",
+      "nodes": 4
+    },
+    {
+      "name": "BV-01 - Boas-vindas automáticas (site → WhatsApp)",
+      "id": "1rnwiIYsRCzPYe7D",
+      "active": true,
+      "versionId": "804c81cd-3433-4306-9117-4f7f2755d356",
+      "sha256": "f9c663f5ad3af3a2a8892d6dfcfe661087b9419c3676eb20a8691df4fbd07dc7",
+      "nodes": 9
+    },
+    {
+      "name": "ADS-01 - Captura de clique WhatsApp (site → código)",
+      "id": "g8Fgxc7Kqt2SQgws",
+      "active": true,
+      "versionId": "6d3457b4-2797-4053-b033-4b5d500a25b8",
+      "sha256": "77c7d50bba25c72d43ce3d6002a353f76eae029f716ee5f0542cbc1410778390",
+      "nodes": 4
+    },
+    {
+      "name": "FU-US - Follow-up de ultrassom (quem ficou sem resposta)",
+      "id": "ENKFsRzJkLJMi5yf",
+      "active": false,
+      "versionId": "f5ab9e1a-78e3-4bc4-8f7a-ba7317c56d0d",
+      "sha256": "652e089126b4d33d4bc2b8d5d14588342fe20e883711ea9031d74fc68e8b14bf",
+      "nodes": 9
+    },
+    {
+      "name": "ANA-05 DIAGNOSTICO (Claude) - Agendas e cobertura",
+      "id": "4yC3Wk8bKexOVdH1",
+      "active": false,
+      "versionId": "4b0635e2-5a02-44f1-ae84-8d2b99ef6b8d",
+      "sha256": "d6f70afe6bb5ef7797330a05ee2c6e29055870493e20d63f591aefb01904890a",
+      "nodes": 5
+    },
+    {
+      "name": "ANA-05 DIAGNOSTICO - Agendas visiveis e cobertura de WhatsApp",
+      "id": "AcYmak8VDuAgHw54",
+      "active": false,
+      "versionId": "56151458-8f9f-41d6-b4c0-e7b1585b2df1",
+      "sha256": "ac3f4fc21f37bd9456b554aed8e1ece5ee6c7c79db8365d8ef8bbe6e8203cd4a",
+      "nodes": 5
+    }
+  ]
+}
