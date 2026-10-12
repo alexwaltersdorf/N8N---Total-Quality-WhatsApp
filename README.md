@@ -1,41 +1,42 @@
-# ANA — Automação de Atendimento WhatsApp
+# Ana — atendimento WhatsApp da Total Quality
 
-Documentação técnica dos fluxos n8n usados pela ANA, assistente virtual da Total Quality.
+**O cliente quer clareza para dar o próximo passo.**
 
-Este repositório existe para manter a operação auditável, facilitar atualizações e acompanhar semanalmente desempenho, custo, segurança e qualidade do atendimento.
+Documentação revisada em **12/10/2026** a partir de 12 fluxos n8n (125 nós), configuração do banco, testes sintéticos e comparação com o manual anterior.
 
-## Visão geral
+## Comece aqui
 
-| Fluxo | Função | IA | Execução |
-|---|---|---|---|
-| ANA 01 — Atendimento WhatsApp | Atendimento, leitura de pedidos, preços, escalonamento e gravação do lead | GPT-5.6 Luna | Webhook |
-| ANA 02 — Follow-up Carinhoso | Cadência automática D+1 a D+30 | GPT-5.6 Luna | A cada 5 minutos |
-| ANA 03 — Resumo Diário | Resumo operacional por WhatsApp | Não utiliza IA | Diariamente às 07h |
-| ANA 04 — Auditoria de Atendimento | Avaliação diária de qualidade, vendas e compliance | GPT-5.6 Luna | Diariamente às 07h10 |
-| ANA 05 — Diagnóstico de agendas | Validação de calendários e cobertura | Não utiliza IA | Manual |
-| ANA 05 — Diagnóstico alternativo | Segunda versão do diagnóstico de agendas | Não utiliza IA | Manual |
-
-## Documentação
-
-- [Arquitetura e fluxo de dados](docs/ARQUITETURA.md)
-- [Catálogo detalhado dos fluxos](docs/FLUXOS.md)
-- [Runbook operacional](docs/RUNBOOK.md)
-- [Auditoria semanal](docs/AUDITORIA_SEMANAL.md)
-- [Desempenho e custos](docs/CUSTOS_E_DESEMPENHO.md)
-- [Segurança, privacidade e compliance](docs/SEGURANCA_E_COMPLIANCE.md)
+- [Manual técnico e operacional em HTML](docs/manual-ana.html)
+- [Auditoria de 12/10/2026 em HTML](auditorias/2026/2026-10-12.html)
+- [Módulo de clareza incorporado à Ana](conhecimento/clareza-proximo-passo-v1.md)
+- [Registro da implantação e validação](conhecimento/implantacao-2026-10-12.json)
+- [Inventário com versões e hashes](docs/inventario-2026-10-12.json)
+- [Modelo de relatório semanal em HTML](templates/relatorio-auditoria-semanal.html)
 - [Histórico de mudanças](CHANGELOG.md)
 
-## Regras de manutenção
+Para ler o HTML com o layout completo, baixe o arquivo e abra no navegador. O GitHub pode exibir apenas o código-fonte; GitHub Pages não foi ativado por esta revisão.
 
-1. Nunca versionar chaves de API, credenciais, telefones ou dados de pacientes.
-2. Exportar o JSON de um fluxo somente após remover credenciais e dados de execução.
-3. Testar em rascunho antes de publicar no n8n.
-4. Registrar toda mudança funcional no `CHANGELOG.md`.
-5. Executar a [auditoria semanal](docs/AUDITORIA_SEMANAL.md) antes de alterar modelo, prompt ou regras comerciais.
-6. Preservar os contratos internos descritos em [FLUXOS.md](docs/FLUXOS.md).
+## Estado observado
 
-## Estado documentado
+| Fluxo | Papel | IA | Gatilho |
+|---|---|---|---|
+| ANA-01 | Atendimento e consulta de preços | Responses + transcrição | Webhook |
+| ANA-02 | Follow-up | Não; textos fixos | A cada 5min, sujeito às travas do banco |
+| ANA-03 | Resumo | Não | 07:00 |
+| ANA-04 | Auditoria por amostra | Responses | 00:00 |
+| ANA-05 | Sincronização da agenda | Não | 15min + 05:00 |
+| ANA-06 | Lembrete de véspera | Não | Dias úteis, 09:00 |
+| ANA-07 | Planilha legada | Não | 30min |
+| BV-01 / ADS-01 | Boas-vindas / atribuição do site | Não | 1min / webhook |
+| FU-US e dois diagnósticos | Rotinas manuais | Não | Não publicados |
 
-Última revisão técnica: **27/08/2026**.
+O relatório registra 18 achados, incluindo correções ainda pendentes. A atualização do prompt foi aplicada; isso não significa que todos os problemas dos fluxos foram corrigidos.
 
-Os fluxos 01, 02 e 04 utilizam a OpenAI Responses API com `gpt-5.6-luna`. Os fluxos 03 e 05 são determinísticos e não devem receber IA sem justificativa técnica e financeira.
+## Manutenção
+
+1. Manter relatórios em HTML e registrar toda mudança por versão/data.
+2. Não publicar credenciais, endpoints secretos, dados de pacientes, transcrições, pinData ou exports brutos.
+3. Testar em rascunho isolado, sem destinatário real; preservar o contrato `###DADOS###`.
+4. Atualizar manual, inventário, evidências sanitizadas e rollback junto da mudança.
+5. GitHub documenta o sistema. Alterar este repositório não altera automaticamente `ana_config` nem publica fluxos no n8n.
+6. O registro de agosto é histórico; para estado atual, usar os documentos de outubro.
