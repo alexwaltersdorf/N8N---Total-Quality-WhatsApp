@@ -124,5 +124,14 @@
     "reviewer": "Usuário responsável pela atualização da clínica",
     "reviewed_at": "2026-10-14T13:42:57Z",
     "valid_until": null
+  },
+  {
+    "key": "clinica.especialidades.consultas",
+    "content": "A clínica oferece consultas com gastroenterologista, endocrinologista e dermatologista, cada uma por R$ 300,00. Não presumir desconto, valor Pix, cobertura por convênio ou regra de pagamento que não esteja confirmada.",
+    "status": "approved",
+    "source": "Confirmação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T15:40:27Z",
+    "valid_until": null
   }
 ]

@@ -16,5 +16,14 @@
     "reviewer": null,
     "reviewed_at": null,
     "valid_until": null
+  },
+  {
+    "key": "precos.consultas.condicoes",
+    "content": "A tabela de preços consultada já contém R$ 300,00 para as três especialidades e também registra R$ 270,00 como preço Pix. O usuário confirmou apenas R$ 300,00 por consulta nesta atualização; não oferecer o preço Pix nem afirmar condições de pagamento até confirmação responsável.",
+    "status": "draft",
+    "source": "Diferença entre confirmação explícita do usuário e condição de pagamento encontrada na tabela de preços",
+    "reviewer": null,
+    "reviewed_at": null,
+    "valid_until": null
   }
 ]
