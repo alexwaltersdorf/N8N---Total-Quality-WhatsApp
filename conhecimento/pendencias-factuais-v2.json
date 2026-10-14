@@ -1,45 +1,27 @@
 [
   {
-    "key": "clinica.identidade",
-    "content": "Total Quality Medicina Diagnóstica, Caraguatatuba/SP.",
-    "status": "draft",
-    "source": "Exports fornecidos pelo usuário",
-    "reviewer": null,
-    "reviewed_at": null,
-    "valid_until": null
-  },
-  {
-    "key": "clinica.horarios",
-    "content": "PENDENTE: referências divergem entre 7h–17h com sábado 7h–12h e 7h30–18h de segunda a sexta. Confirmar com a operação.",
-    "status": "draft",
-    "source": "Skill da clínica x ANA-02",
-    "reviewer": null,
-    "reviewed_at": null,
-    "valid_until": null
-  },
-  {
     "key": "catalogo.exames",
-    "content": "PENDENTE: validar catálogo; referências divergem sobre mamografia e densitometria. Não aprovar este rascunho como catálogo.",
-    "status": "draft",
     "source": "Skill da clínica x ANA-04",
+    "status": "draft",
+    "content": "PENDENTE: validar catálogo; referências divergem sobre mamografia e densitometria. Não aprovar este rascunho como catálogo.",
     "reviewer": null,
     "reviewed_at": null,
     "valid_until": null
   },
   {
     "key": "convenios.regras",
-    "content": "PENDENTE: lista oficial vigente por exame, plano, necessidade de autorização e responsável pela revisão.",
-    "status": "draft",
     "source": "Necessita tabela oficial vigente",
+    "status": "draft",
+    "content": "PENDENTE: cobertura e condições por exame dos credenciamentos Solumedi, Cartão de Todos e Lead Saúde; autorização, plano/modalidade, descontos, valores e reembolso. A lista de nomes foi confirmada separadamente.",
     "reviewer": null,
     "reviewed_at": null,
     "valid_until": null
   },
   {
     "key": "preparo.protocolos",
-    "content": "PENDENTE: protocolo aprovado por exame, versão e responsável clínico. Não autorizar interrupção de medicação por texto genérico.",
-    "status": "draft",
     "source": "Necessita protocolo clínico aprovado",
+    "status": "draft",
+    "content": "PENDENTE: homologação pela Total Quality das fontes externas pesquisadas e aprovação de protocolo por exame/modalidade, faixa etária, versão e responsável clínico. Rascunhos externos não são instruções liberadas para pacientes.",
     "reviewer": null,
     "reviewed_at": null,
     "valid_until": null

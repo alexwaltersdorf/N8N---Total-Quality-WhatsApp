@@ -22,7 +22,7 @@
       "baseline_version_id": "dd3daee5-a523-414c-9072-6da35cf4aa9b",
       "source": "export privado fornecido em 2026-10-13",
       "source_sha256": "5cd73d29ee5071c00640cac83917cf56afb2c64230caf96a69e1f9da3a5e6fa1",
-      "deployed_version_id": "6ff8a606-cf8b-4c06-a3d8-16438cb07417"
+      "deployed_version_id": "3056782b-8bf6-45c6-933c-69537cd527df"
     },
     "BV-01-Boas-vindas-corrigidas.json": {
       "workflow_id": "1rnwiIYsRCzPYe7D",
@@ -32,5 +32,9 @@
       "deployed_version_id": "2743226c-2a1e-4ca3-8af1-b67faac94fd4"
     }
   },
-  "verified_at": "2026-10-14T11:00:25.960Z"
+  "verified_at": "2026-10-14T11:00:25.960Z",
+  "institutional_update": {
+    "date": "2026-10-14",
+    "evidence": "../conhecimento/implantacao-institucional-2026-10-14.json"
+  }
 }
