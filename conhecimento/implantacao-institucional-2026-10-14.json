@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-14",
+  "production_deployed": true,
+  "approved_factual_records": 3,
+  "draft_records": 10,
+  "external_preparation_sources": 7,
+  "clinical_protocols_approved": 0,
+  "prompt_before_md5": "844ef28c16c6ae382437dcfd036d94de",
+  "prompt_after_md5": "cb48fe77b31aee7174471e07871fbed8",
+  "backup_key": "system_prompt_backup_fatos_20261014_844ef28c16c6ae382437dcfd036d94de",
+  "local_checks": 11,
+  "schema_validations": 3,
+  "db_install_execution": "198815",
+  "db_readback_execution": "198830",
+  "prompt_readback_exact": true,
+  "published_readback_exact": true,
+  "workflows": [
+    {
+      "workflowId": "UEbCnaDY9c5GbLeR",
+      "versionId": "3056782b-8bf6-45c6-933c-69537cd527df",
+      "nodeName": "Montar mensagem"
+    },
+    {
+      "workflowId": "wX92vCvWPEOheINW",
+      "versionId": "05216ff5-a795-4d61-8709-a3a2dc9e5e09",
+      "nodeName": "Montar Análise"
+    }
+  ],
+  "patient_messages_sent_by_tests": 0,
+  "pending": [
+    "Disponibilidade de mamografia e densitometria",
+    "Condições dos credenciamentos por exame",
+    "Homologação clínica de fontes e protocolos de preparo"
+  ],
+  "publication_checks": 6,
+  "verified_at": "2026-10-14 13:29:05 UTC"
+}

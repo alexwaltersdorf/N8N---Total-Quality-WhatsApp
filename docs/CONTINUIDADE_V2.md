@@ -44,7 +44,7 @@ O controle bloqueia repetição do mesmo evento e texto normalizado recente. A i
 
 Monitorar: taxa de eventos duplicados, bloqueios por intervenção humana, envios incertos, tempo até retomada, respostas sem dados válidos e contatos proativos por dia. Esses indicadores complementam o ML existente; não são taxas medidas de produção nesta revisão. ana_envios_log conserva o registro antecipado das reservas de follow-up; medir aceitação pelo provedor em ana_runtime_outbox, com status accepted, para não confundir tentativa com envio aceito.
 
-Horários e alguns itens do catálogo divergem entre fontes. Estão em [pendências factuais](../conhecimento/pendencias-factuais-v2.json), sem promoção para fatos aprovados. A equipe deve validar fonte, vigência e preparo clínico.
+Nome, endereço, contatos, horário e os três credenciamentos foram confirmados pelo usuário em 14/10/2026; ver [dados aprovados](../conhecimento/dados-clinica-2026-10-14.json). Permanecem [pendências](../conhecimento/pendencias-factuais-v2.json) de catálogo, condições por exame e preparos. As [fontes de preparo pesquisadas](../conhecimento/preparos-para-validacao.md) são rascunhos, sem homologação clínica.
 
 ## Validação e rollback
 

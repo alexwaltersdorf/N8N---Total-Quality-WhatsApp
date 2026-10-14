@@ -1,0 +1,29 @@
+[
+  {
+    "key": "clinica.identidade",
+    "content": "Total Quality Medicina Diagnóstica. Endereço: Rua Padre Anchieta, 1010 — Centro, Caraguatatuba/SP. Telefone e WhatsApp: (12) 3887-3535.",
+    "status": "approved",
+    "source": "Confirmação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:17:25Z",
+    "valid_until": null
+  },
+  {
+    "key": "clinica.horarios",
+    "content": "Atendimento de segunda a sexta, das 7h30 às 18h, no fuso America/Sao_Paulo. Fechado aos sábados, domingos e feriados nacionais. Horários específicos de exames dependem da agenda; feriados estaduais e municipais ainda exigem confirmação da equipe.",
+    "status": "approved",
+    "source": "Confirmação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:17:25Z",
+    "valid_until": null
+  },
+  {
+    "key": "convenios.credenciados",
+    "content": "Credenciamentos informados pela clínica: Solumedi, Cartão de Todos e Lead Saúde. A lista confirma o vínculo informado, sem garantir cobertura de todo exame, modalidade de plano, autorização, gratuidade, desconto ou reembolso. Confirme as condições específicas com a equipe. Outros nomes não estão confirmados nesta atualização; não invente credenciamento nem negativa definitiva.",
+    "status": "approved",
+    "source": "Confirmação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:17:25Z",
+    "valid_until": null
+  }
+]
