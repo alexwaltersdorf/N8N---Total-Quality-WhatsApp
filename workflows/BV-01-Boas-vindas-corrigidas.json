@@ -1,0 +1,493 @@
+{
+  "name": "BV-01 - Boas-vindas automáticas (site → WhatsApp)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "77a391e8-9b42-4c4b-86fa-bc33d6bc8090",
+      "name": "A cada 5 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -960,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "RECONFIGURAR_PLANILHA_PRIVADA",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "FORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "id": "219057f0-6291-4cd4-8143-6f76d5ce8418",
+      "name": "Ler aba Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -736,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const JANELA_HORAS = 14;\nconst MAX_POR_RODADA = 10;\nconst HORA_INICIO = 8;\nconst HORA_FIM = 20;\n\nconst IDENTIFICACAO = 'Total Quality Medicina Diagnóstica — Registro 970616\\nResponsável Técnico: Alex Waltersdorf - 267.339';\n\nfunction montarMensagem(primeiroNome) {\n const nome=/^[A-Za-zÀ-ÿ]{2,30}$/.test(primeiroNome||'')?primeiroNome:'';\n return (nome?'Olá, '+nome+'!':'Olá!')+' Sou a Ana, assistente virtual da Total Quality. Recebemos seu contato pelo site. Com qual exame ou dúvida podemos ajudar?\\n\\n'+IDENTIFICACAO;\n}\n\nconst NOMES_BLOQUEADOS = /teste|ignorar/i;\nconst NUMEROS_BLOQUEADOS = new Set(['5512999990000']);\n\nfunction normalizarTelefone(bruto) {\n  const d = String(bruto == null ? '' : bruto).replace(/\\D/g, '');\n  let nacional = d;\n  if (d.length === 12 || d.length === 13) {\n    if (d.slice(0, 2) !== '55') return null;\n    nacional = d.slice(2);\n  } else if (d.length !== 10 && d.length !== 11) {\n    return null;\n  }\n  if (nacional.length !== 11) return null;\n  if (nacional.charAt(2) !== '9') return null;\n  const ddd = Number(nacional.slice(0, 2));\n  if (ddd < 11 || ddd > 99) return null;\n  return '55' + nacional;\n}\n\nfunction instanteDaLinha(texto) {\n  const m = String(texto == null ? '' : texto).match(/^(\\d{2})\\/(\\d{2})\\/(\\d{4})[ T](\\d{2}):(\\d{2}):(\\d{2})$/);\n  if (!m) return null;\n  return Date.UTC(Number(m[3]), Number(m[2]) - 1, Number(m[1]), Number(m[4]) + 3, Number(m[5]), Number(m[6]));\n}\n\nconst agora = Date.now();\nconst limite = agora - JANELA_HORAS * 60 * 60 * 1000;\nconst horaLocal = Number(new Date(agora).toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', hour: '2-digit', hour12: false }));\nconst horarioPermitido = horaLocal >= HORA_INICIO && horaLocal < HORA_FIM;\n\nconst vistos = new Set();\nconst saida = [];\n\nfor (const item of $input.all()) {\n  const linha = item.json;\n  if(linha.opt_out===true || /^(true|sim|1)$/i.test(String(linha['Opt-out']||'')))continue;\n  const quando = instanteDaLinha(linha['Data/Hora']);\n  if (quando === null || quando < limite || quando > agora + 60 * 60 * 1000) continue;\n\n  const nomeBruto = String(linha['Nome'] == null ? '' : linha['Nome']).trim();\n  if (NOMES_BLOQUEADOS.test(nomeBruto)) continue;\n\n  const telefone = normalizarTelefone(linha['Telefone']);\n  if (!telefone) continue;\n  if (NUMEROS_BLOQUEADOS.has(telefone)) continue;\n\n  if (vistos.has(telefone)) continue;\n  vistos.add(telefone);\n\n  const primeiroNome = nomeBruto ? nomeBruto.split(/\\s+/)[0] : '';\n  saida.push({ json: {\n    telefone: telefone,\n    nome: nomeBruto,\n    origem: String(linha['Origem (source)'] == null ? '' : linha['Origem (source)']),\n    texto: montarMensagem(primeiroNome),\n    delay: 1200,\n    horarioPermitido: horarioPermitido\n  } });\n}\n\nreturn [{json:{candidates:saida.map(x=>x.json)}}];"
+      },
+      "id": "aefa75ed-d25a-49f7-b6e2-a24238aec955",
+      "name": "Selecionar novos e montar mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.horarioPermitido }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "545a0002-ca7c-48b1-a7d5-903072744e1b",
+      "name": "Dentro do horário (8h-20h)?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $json.guard.payload.phone, text: $json.guard.payload.texto, delay: 0, linkPreview: false }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "c9c54603-6502-46b7-82c6-355f4d6d0264",
+      "name": "Enviar boas-vindas (Evolution)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        144,
+        208
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1 AS ready FROM ana_runtime_outbox LIMIT 0;",
+        "options": {}
+      },
+      "id": "040795f9-a106-44ec-87a9-7314fad96e79",
+      "name": "Garantir tabela de envios",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -848,
+        480
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "3dcfa85f-c8b0-4e7f-9ace-ce82b027cd06",
+      "name": "Selecionar pendentes após deduplicar",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT v AS candidate FROM jsonb_array_elements($1::jsonb->'candidates') WITH ORDINALITY AS e(v,ord) WHERE (v->>'horarioPermitido')::boolean=true AND NOT EXISTS(SELECT 1 FROM tq_boasvindas_enviadas t WHERE t.telefone=v->>'telefone') AND NOT EXISTS(SELECT 1 FROM ana_runtime_outbox o WHERE o.phone=v->>'telefone' AND o.origin='BV-01') AND NOT EXISTS(SELECT 1 FROM ana_leads l WHERE l.phone=v->>'telefone' AND (l.bot_ativo IS NOT TRUE OR l.opt_out=true OR l.last_patient_msg_at IS NOT NULL)) AND NOT EXISTS(SELECT 1 FROM ana_mensagens m WHERE m.phone=v->>'telefone') ORDER BY ord LIMIT 10;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify($json)] }}"
+        }
+      },
+      "position": [
+        1320,
+        1160
+      ]
+    },
+    {
+      "id": "c07c3492-4685-443f-8292-e2c16454e240",
+      "name": "Preparar candidatos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return $input.all().filter(i=>i.json.candidate?.telefone).map((i,k)=>({json:i.json.candidate,pairedItem:{item:k}}));"
+      },
+      "position": [
+        1560,
+        1160
+      ]
+    },
+    {
+      "id": "bf48f7e9-5fba-4354-a964-167eec357738",
+      "name": "Uma boas-vindas por vez",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "position": [
+        1800,
+        1160
+      ]
+    },
+    {
+      "id": "475b5080-2dd9-4665-a1e8-2109f11065fe",
+      "name": "Fim",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "parameters": {},
+      "position": [
+        600,
+        1320
+      ]
+    },
+    {
+      "id": "99bcd360-4377-4c81-b413-325b84da50f3",
+      "name": "Reservar envio com trava",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ana_runtime_claim($1::jsonb) AS guard;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify(({...$json,phone:$json.telefone,origin:'BV-01',send_key:'BV-01:'+String($env.EVOLUTION_INSTANCE)+':'+$json.telefone,owner:String($execution.id)}))] }}"
+        }
+      },
+      "position": [
+        840,
+        1320
+      ]
+    },
+    {
+      "id": "a7dfcf0e-4c05-43dd-99c2-41e6550d6e68",
+      "name": "Envio autorizado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9eabf1da-f943-42cb-bfae-454c3de96add",
+              "leftValue": "={{ $json.guard.allowed === true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1080,
+        1320
+      ]
+    },
+    {
+      "id": "d401fe6c-f10b-49f3-87de-65093119265d",
+      "name": "Registrar resultado do envio",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ana_runtime_finish($1::jsonb) AS result;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify(({send_key:$('Reservar envio com trava').item.json.guard.payload.send_key,owner:$('Reservar envio com trava').item.json.guard.payload.owner,status_code:Number($json.statusCode)||0,provider_id:($json.body?.key?.id || $json.body?.data?.key?.id || ''),error:!!($json.error || $json.body?.error)}))] }}"
+        }
+      },
+      "position": [
+        1320,
+        1320
+      ]
+    },
+    {
+      "id": "29c0eac8-feb6-4ea7-9995-3375cf7640ea",
+      "name": "API aceitou a mensagem?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c5046521-81bc-45f4-a3fb-479c9087d88f",
+              "leftValue": "={{ $json.result.accepted === true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1560,
+        1320
+      ]
+    }
+  ],
+  "connections": {
+    "Ler aba Leads": {
+      "main": [
+        [
+          {
+            "node": "Selecionar novos e montar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Selecionar novos e montar mensagem": {
+      "main": [
+        [
+          {
+            "node": "Selecionar pendentes após deduplicar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dentro do horário (8h-20h)?": {
+      "main": [
+        [
+          {
+            "node": "Reservar envio com trava",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Uma boas-vindas por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "A cada 5 minutos": {
+      "main": [
+        [
+          {
+            "node": "Garantir tabela de envios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Garantir tabela de envios": {
+      "main": [
+        [
+          {
+            "node": "Ler aba Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar envio com trava": {
+      "main": [
+        [
+          {
+            "node": "Envio autorizado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio autorizado?": {
+      "main": [
+        [
+          {
+            "node": "Enviar boas-vindas (Evolution)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Uma boas-vindas por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar boas-vindas (Evolution)": {
+      "main": [
+        [
+          {
+            "node": "Registrar resultado do envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar resultado do envio": {
+      "main": [
+        [
+          {
+            "node": "API aceitou a mensagem?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API aceitou a mensagem?": {
+      "main": [
+        [
+          {
+            "node": "Uma boas-vindas por vez",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Uma boas-vindas por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Selecionar pendentes após deduplicar": {
+      "main": [
+        [
+          {
+            "node": "Preparar candidatos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar candidatos": {
+      "main": [
+        [
+          {
+            "node": "Uma boas-vindas por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uma boas-vindas por vez": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dentro do horário (8h-20h)?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/Sao_Paulo"
+  },
+  "pinData": {}
+}

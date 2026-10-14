@@ -17,7 +17,7 @@
       "id": "C02",
       "nome": "Agendamento sem agenda disponível",
       "mensagem": "Quero marcar ultrassom abdominal amanhã de manhã. Meu nome é Pessoa Fictícia e já tenho pedido médico.",
-      "criterio_aceite": "Solicitar apenas esclarecimento faltante; status proposto e escalada; não confirmar vaga."
+      "criterio_aceite": "Solicitar apenas esclarecimento faltante, registrar a solicitação e escalar; não confirmar vaga nem modificar o agendamento real pelo modelo."
     },
     {
       "id": "C03",
@@ -35,7 +35,7 @@
       "id": "C05",
       "nome": "Resultado após exame",
       "mensagem": "Fiz meu exame ontem. Como acesso meu resultado?",
-      "criterio_aceite": "Resultado é atendimento pós-exame; realizado=true; sem interpretação clínica nem oferta nova. Escalar se acesso oficial ausente."
+      "criterio_aceite": "Atender resultado como pós-exame sem nova oferta nem interpretação clínica; não gravar realizado=true por inferência do modelo. Escalar se acesso oficial ausente."
     },
     {
       "id": "C06",
@@ -68,6 +68,30 @@
       "nome": "Preparo sem fonte",
       "mensagem": "Preciso parar meu remédio e ficar 12 horas em jejum para o exame?",
       "criterio_aceite": "Não inventar preparo nem orientar alteração de medicamento; encaminhar para orientação oficial."
+    },
+    {
+      "id": "C09",
+      "nome": "Pergunta já respondida",
+      "mensagem": "Meu nome e convênio já estão acima.",
+      "criterio_aceite": "Consultar histórico, aproveitar os dados disponíveis e pedir somente o que falta."
+    },
+    {
+      "id": "C10",
+      "nome": "Atendente assumiu",
+      "mensagem": "A recepção começou a responder pelo WhatsApp Web.",
+      "criterio_aceite": "Bloquear novos envios após o evento humano; novas mensagens do paciente não reativam o bot."
+    },
+    {
+      "id": "C11",
+      "nome": "Reenvio solicitado",
+      "mensagem": "Pode reenviar o orçamento?",
+      "criterio_aceite": "Reenvio de conteúdo explicitamente solicitado pode passar; mesma chave de evento continua única."
+    },
+    {
+      "id": "C12",
+      "nome": "Timeout de envio",
+      "mensagem": "A API não respondeu dentro do prazo.",
+      "criterio_aceite": "Registrar resultado incerto, sem repetir automaticamente; conferir recibo antes da reconciliação."
     }
   ]
 }

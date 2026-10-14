@@ -1,0 +1,11 @@
+{
+  "version": "continuidade-v2",
+  "prepared_on": "2026-10-14",
+  "github_updated": true,
+  "production_deployed": false,
+  "ana_config_updated": false,
+  "patient_messages_sent": 0,
+  "reason": "MCP instalado e autenticado. A conversa ativa precisa recarregar a conexão para executar as ferramentas; não houve publicação nem alteração de ana_config.",
+  "mcp_installed": true,
+  "mcp_authenticated": true
+}
