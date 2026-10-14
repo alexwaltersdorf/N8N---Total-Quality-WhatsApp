@@ -11,4 +11,4 @@ O estado documentado em agosto permanece no histórico Git e no relatório datad
 
 ## Revisão de 14/10/2026
 
-A documentação acima registra a versão anterior. Consulte [Continuidade V2](CONTINUIDADE_V2.md) para as correções preparadas, a migração, os limites e o procedimento de publicação. A atualização do GitHub não confirma aplicação no n8n.
+A documentação acima registra a versão anterior. Consulte [Continuidade V2](CONTINUIDADE_V2.md) para as correções implantadas em 14/10/2026, os limites e o procedimento de operação. As versões ativas e os hashes foram relidos; consulte o registro de implantação para as evidências.

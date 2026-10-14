@@ -29,7 +29,7 @@ function run(w,name,data={},refs={}){
  return new Function('$json','$input','$','$env','$execution',node(w,name).parameters.jsCode)(items[0].json,{all:()=>items,first:()=>items[0]},accessor,{EVOLUTION_INSTANCE:'test'},{id:'test-run'});
 }
 (async()=>{
-await pg.exec("CREATE TABLE ana_leads(phone text PRIMARY KEY,nome text,bot_ativo boolean DEFAULT true,opt_out boolean DEFAULT false,human_msg_at timestamptz,escalado boolean DEFAULT false,followup_due_at timestamptz,followup_step int DEFAULT 0,last_patient_msg_at timestamptz,last_bot_msg_at timestamptz,updated_at timestamptz DEFAULT now(),agendamento jsonb,proxima_acao text,temperatura text,funil text,consciencia int,intencao text,exames jsonb,convenio text,motivo_escalada text,resumo_interno text); CREATE TABLE ana_mensagens(id bigserial PRIMARY KEY,phone text,role text,tipo text,conteudo text,message_id text,dados jsonb,created_at timestamptz DEFAULT now());CREATE UNIQUE INDEX msg_id ON ana_mensagens(message_id) WHERE message_id IS NOT NULL;CREATE TABLE ana_envios_log(phone text,tipo text,enviado_em timestamptz DEFAULT now());CREATE TABLE ana_config(chave text PRIMARY KEY,valor text);");
+await pg.exec("CREATE TABLE ana_leads(phone text PRIMARY KEY,nome text,bot_ativo boolean DEFAULT true,opt_out boolean DEFAULT false,human_msg_at timestamptz,escalado boolean DEFAULT false,followup_due_at timestamptz,followup_step int DEFAULT 0,last_patient_msg_at timestamptz,last_bot_msg_at timestamptz,updated_at timestamptz DEFAULT now(),agendamento jsonb,proxima_acao text,temperatura text,funil text,consciencia int,intencao text,exames jsonb,convenio text,motivo_escalada text,resumo_interno text,status_manual text); CREATE TABLE ana_mensagens(id bigserial PRIMARY KEY,phone text,role text,tipo text,conteudo text,message_id text,dados jsonb,created_at timestamptz DEFAULT now());CREATE UNIQUE INDEX msg_id ON ana_mensagens(message_id) WHERE message_id IS NOT NULL;CREATE TABLE ana_envios_log(phone text,tipo text,enviado_em timestamptz DEFAULT now());CREATE TABLE ana_config(chave text PRIMARY KEY,valor text,updated_at timestamptz DEFAULT now());");
 await pg.exec('CREATE ROLE anon; CREATE ROLE authenticated;');
 await test('Migração e reaplicação idempotente no PostgreSQL embarcado',async()=>{await pg.exec(read('00-migracao.sql'));await pg.exec(read('00-migracao.sql'));});
 await test('Tabelas privadas têm RLS e sem leitura por anon/authenticated',async()=>{
@@ -42,6 +42,22 @@ await test('Funções de envio não são executáveis por anon/authenticated',as
  for(const f of ['ana_runtime_claim','ana_runtime_finish','ana_runtime_observe','ana_runtime_resolve_human']){
   for(const r of ['anon','authenticated'])assert.equal((await pg.query("SELECT has_function_privilege($1,$2,'EXECUTE') AS allowed",[r,f+'(jsonb)'])).rows[0].allowed,false);
  }
+});
+await test('Função real de follow-up respeita pausa e mantém a tarefa pendente',async()=>{
+ await pg.exec("INSERT INTO ana_config(chave,valor) VALUES('followup_envios_suspensos','false'),('followup_teto_diario','10'),('followup_teto_hora','4') ON CONFLICT(chave) DO UPDATE SET valor=EXCLUDED.valor");
+ const p=await lead(undefined,{bot_ativo:false,proxima_acao:'follow_up_d1',followup_due_at:'2026-10-13T14:00:00Z',last_patient_msg_at:'2026-10-13T13:00:00Z',exames:'[]'});
+ const r=await pg.query("SELECT * FROM ana_claim_followups(1,'2026-10-14T14:00:00Z')");
+ assert.equal(r.rows.length,0);
+ assert((await pg.query('SELECT followup_due_at FROM ana_leads WHERE phone=$1',[p])).rows[0].followup_due_at);
+});
+await test('Busca real de follow-up retorna snapshot para a trava',async()=>{
+ await pg.exec("CREATE FUNCTION ana_exame_laboratorial(text) RETURNS boolean LANGUAGE sql AS 'SELECT false'");
+ const p=await lead(undefined,{proxima_acao:'follow_up_d1',followup_due_at:'2026-10-13T14:00:00Z',last_patient_msg_at:'2026-10-13T13:00:00Z',exames:'[]'});
+ const q=node(fu,'Buscar Leads com Follow-up Devido').parameters.query.replace('ana_claim_followups()', "ana_claim_followups(1,'2026-10-14T14:00:00Z')");
+ const r=(await pg.query(q)).rows;
+ assert.equal(r.length,1);assert.equal(r[0].phone,p);assert(r[0].last_patient_msg_at);
+ const guard=await call('ana_runtime_claim',payload(p,{origin:'ANA-02',patient_snapshot:r[0].last_patient_msg_at}));
+ assert(guard.allowed);
 });
 await test('Sintaxe JS e conexões dos quatro fluxos',()=>{
  for(const w of flows){const names=new Set(w.nodes.map(n=>n.name));assert.equal(names.size,w.nodes.length);for(const [name,cs] of Object.entries(w.connections)){assert(names.has(name),name);for(const bs of cs.main||[])for(const edge of bs)assert(names.has(edge.node),edge.node);}
@@ -241,6 +257,17 @@ await test('Payload carrega política, histórico humano, base aprovada e impede
  assert(b2.instructions.includes('Base original'));
  assert(!b2.instructions.includes('\\n'));
 
+});
+await test('Gravação da base preserva marcadores literais, backup e hash',async()=>{
+ const {prepareKnowledgeUpdate}=require('../scripts/preparar-base-conhecimento.cjs');
+ const original="Texto institucional {{NOME_CLINICA}} e 'aspas'.";
+ const policy=fs.readFileSync(path.join(out,'conhecimento/continuidade-pausa-v2.md'),'utf8');
+ await pg.query("INSERT INTO ana_config(chave,valor) VALUES('system_prompt',$1) ON CONFLICT(chave) DO UPDATE SET valor=EXCLUDED.valor",[original]);
+ const plan=prepareKnowledgeUpdate(original,policy);await pg.exec(plan.sql);
+ const value=(await pg.query("SELECT valor,md5(valor) AS hash FROM ana_config WHERE chave='system_prompt'")).rows[0];
+ assert.equal(value.valor,plan.prompt);assert.equal(value.hash,plan.after_md5);assert(value.valor.includes('{{NOME_CLINICA}}'));
+ assert.equal((await pg.query('SELECT valor FROM ana_config WHERE chave=$1',[plan.backup_key])).rows[0].valor,original);
+ await assert.rejects(()=>pg.exec(plan.sql),/Prompt atual mudou/);await pg.exec('ROLLBACK');
 });
 const result={generated_at:new Date().toISOString(),engine:'PGlite 0.5.9; PostgreSQL embarcado; esquema mínimo inferido dos exports',scope:'JS de nós, SQL real e grafo. Não substitui n8n/Evolution nem teste concorrente multiconexão.',passed:checks.length,checks};
 fs.mkdirSync(path.join(out,'tests/results'),{recursive:true});fs.writeFileSync(path.join(out,'tests/results/runtime.json'),JSON.stringify(result,null,2)+'\n');

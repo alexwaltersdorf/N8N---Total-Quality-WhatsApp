@@ -2,13 +2,16 @@
 
 ## 2026-10-14
 
-### Preparado e versionado; publicação no n8n pendente
+### Implantado e verificado no n8n
 
 - Quatro templates corrigidos com controle compartilhado de duplicidade, pausa humana persistente e aceitação do provedor antes de registrar a resposta.
 - Política Continuidade V2: reaproveitar histórico, evitar perguntas repetidas, permitir silêncio e preservar dados anteriores e agendamentos reais.
 - Migração com RLS, testes sintéticos, preparação privada com verificação de versão e guia de implantação/rollback.
 - Horários e itens de catálogo divergentes permanecem pendentes de validação factual.
-- 70 verificações locais aprovadas (42 runtime, 23 ML, 5 publicação), sem mensagens para pacientes. Testes locais não comprovam implantação no n8n.
+- 74 verificações locais aprovadas (45 runtime, 23 ML, 6 publicação), seis cenários no motor n8n com serviços externos simulados e ensaio no PostgreSQL real com rollback.
+- Schema, índices e triggers conferidos. Função real de follow-up passou a respeitar pausa, observações pendentes e reservas incertas; busca retorna o snapshot do paciente. Limites de 20/dia e 4/hora preservados.
+- Quatro versões publicadas e relidas como ativas. Prompt atualizado com backup, preservação literal dos marcadores e hash de leitura idêntico ao esperado. Rotina temporária de manutenção arquivada.
+- Nenhuma mensagem enviada a pacientes pelos testes. Registros de versão e evidências sanitizadas constam no arquivo de implantação de 14/10.
 
 ## 2026-10-12
 

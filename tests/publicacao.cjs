@@ -48,8 +48,9 @@ test('Base V2 tem delimitadores e preserva dados desconhecidos',()=>{
  assert(s.includes('ANA_CONTINUIDADE_V2_INICIO')&&s.includes('ANA_CONTINUIDADE_V2_FIM'));
  assert(s.includes('omita campos desconhecidos'));
 });
-test('Registro distingue preparação de implantação',()=>{
+test('Registro de implantação inclui versões e confirmação de leitura',()=>{
  const r=JSON.parse(read('conhecimento/implantacao-2026-10-14.json'));
- assert.equal(r.production_deployed,false);assert.equal(r.ana_config_updated,false);assert.equal(r.patient_messages_sent,0);
+ assert.equal(r.production_deployed,true);assert.equal(r.ana_config_updated,true);assert.equal(r.test_messages_sent_to_patients,0);assert(r.prompt.readback_verified);assert.equal(r.workflows.length,4);assert(r.workflows.every(w=>w.active&&w.version_id===w.active_version_id));
 });
+test('SQL da base não expõe marcadores à interpolação do n8n',()=>{const {prepareKnowledgeUpdate}=require('../scripts/preparar-base-conhecimento.cjs');const p=prepareKnowledgeUpdate('Base {{VARIAVEL}}',read('conhecimento/continuidade-pausa-v2.md'));assert(!p.sql.includes('{{'));assert(p.prompt.includes('{{VARIAVEL}}'));});
 console.log(JSON.stringify({publication_checks:total,passed:total}));

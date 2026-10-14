@@ -25,7 +25,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT f.*,\n       COALESCE(NULLIF(array_to_string(ARRAY(SELECT jsonb_array_elements_text(f.exames)), '; '), ''), '') AS exames_txt,\n       ana_exame_laboratorial(array_to_string(ARRAY(SELECT jsonb_array_elements_text(f.exames)), '; ')) AS tem_lab\nFROM ana_claim_followups() f",
+        "query": "SELECT f.*, l.last_patient_msg_at,\n       COALESCE(NULLIF(array_to_string(ARRAY(SELECT jsonb_array_elements_text(f.exames)), '; '), ''), '') AS exames_txt,\n       ana_exame_laboratorial(array_to_string(ARRAY(SELECT jsonb_array_elements_text(f.exames)), '; ')) AS tem_lab\nFROM ana_claim_followups() f JOIN ana_leads l ON l.phone=f.phone",
         "options": {}
       },
       "name": "Buscar Leads com Follow-up Devido",

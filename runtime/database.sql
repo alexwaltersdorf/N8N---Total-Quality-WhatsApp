@@ -185,4 +185,110 @@ DO $privacy$ DECLARE r text; BEGIN
   END IF;
  END LOOP;
 END $privacy$;
+
+-- Integração com a função existente, conferida no banco em 14/10/2026.
+CREATE OR REPLACE FUNCTION public.ana_claim_followups(p_limite integer DEFAULT 1, p_agora timestamp with time zone DEFAULT now())
+ RETURNS TABLE(phone text, nome text, exames jsonb, temperatura text, proxima_acao text, followup_step integer, resumo_interno text)
+ LANGUAGE plpgsql
+ SET search_path = pg_catalog, public
+AS $function$
+DECLARE
+  v_agora    timestamptz := p_agora;
+  v_sp       timestamp   := v_agora AT TIME ZONE 'America/Sao_Paulo';
+  v_hora     numeric     := extract(hour FROM v_sp) + extract(minute FROM v_sp) / 60.0;
+  v_dow      int         := extract(isodow FROM v_sp);
+  v_hoje     date        := v_sp::date;
+  v_ini      numeric     := 8.0;
+  v_fim      numeric     := 17.5;
+  v_atraso   numeric;
+  v_teto     int;
+  v_teto_h   int;
+  v_usado    int;
+  v_restante int;
+  v_na_hora  int;
+  v_ultimo   timestamptz;
+  v_min_rest numeric;
+  v_gap      numeric;
+BEGIN
+  PERFORM pg_advisory_xact_lock(hashtextextended('ana_followup_claim_v2', 914));
+  IF coalesce((SELECT valor FROM ana_config WHERE chave = 'followup_envios_suspensos'), 'true') = 'true'
+    THEN RETURN;
+  END IF;
+
+  v_atraso := (abs(hashtext(v_hoje::text)) % 46) / 60.0;
+  IF v_dow > 5 OR v_hora < v_ini + v_atraso OR v_hora >= v_fim THEN RETURN; END IF;
+
+  SELECT coalesce((SELECT valor FROM ana_config WHERE chave = 'followup_teto_diario'), '0')::int
+    INTO v_teto;
+  SELECT count(*) INTO v_usado FROM ana_envios_log
+   WHERE tipo = 'follow_up'
+     AND (enviado_em AT TIME ZONE 'America/Sao_Paulo')::date = v_hoje;
+  v_restante := v_teto - v_usado;
+  IF v_restante < 1 THEN RETURN; END IF;
+
+  SELECT coalesce((SELECT valor FROM ana_config WHERE chave = 'followup_teto_hora'), '4')::int
+    INTO v_teto_h;
+  SELECT count(*) INTO v_na_hora FROM ana_envios_log
+   WHERE tipo = 'follow_up' AND enviado_em > v_agora - interval '1 hour';
+  IF v_na_hora >= v_teto_h THEN RETURN; END IF;
+
+  SELECT max(enviado_em) INTO v_ultimo FROM ana_envios_log
+   WHERE tipo IN ('follow_up', 'lembrete_vespera')
+     AND (enviado_em AT TIME ZONE 'America/Sao_Paulo')::date = v_hoje;
+
+  IF v_ultimo IS NOT NULL THEN
+    v_min_rest := greatest(1, (v_fim - v_hora) * 60);
+    v_gap := greatest(8, least(60, (v_min_rest / v_restante) * (0.6 + random() * 0.8)));
+    IF v_agora < v_ultimo + make_interval(mins => v_gap::int) THEN RETURN; END IF;
+  END IF;
+
+  RETURN QUERY
+  WITH elegiveis AS (
+    SELECT l.phone AS ph
+    FROM ana_leads l
+    WHERE l.followup_due_at IS NOT NULL
+      AND l.followup_due_at <= v_agora
+      AND coalesce(l.opt_out, false)  = false
+      AND l.bot_ativo IS TRUE
+      AND NOT EXISTS (SELECT 1 FROM ana_runtime_observed h WHERE h.phone=l.phone AND h.state='pending')
+      AND NOT EXISTS (SELECT 1 FROM ana_runtime_outbox o WHERE o.phone=l.phone AND o.status IN ('reserved','unknown'))
+      AND coalesce(l.escalado, false) = false
+      AND l.proxima_acao LIKE 'follow\_up%'
+      AND coalesce(l.agendamento->>'status', 'nenhum') NOT IN ('confirmado', 'proposto')
+      AND coalesce((l.agendamento->>'realizado')::boolean, false) = false
+      AND coalesce(l.status_manual, '') NOT IN ('Agendou', 'Encerrado', 'Não Aplica')
+      AND l.last_patient_msg_at IS NOT NULL
+      AND coalesce(l.followup_step, 0) < 5
+      AND NOT EXISTS (
+        SELECT 1 FROM ana_envios_log e
+         WHERE e.phone = l.phone
+           AND (e.enviado_em AT TIME ZONE 'America/Sao_Paulo')::date = v_hoje)
+      AND (SELECT count(*) FROM ana_envios_log e
+            WHERE e.phone = l.phone AND e.tipo = 'follow_up'
+              AND e.enviado_em > coalesce(l.last_patient_msg_at, '-infinity'::timestamptz)) < 2
+    ORDER BY l.followup_due_at
+    LIMIT 1
+    FOR UPDATE OF l SKIP LOCKED
+  ),
+  reservados AS (
+    UPDATE ana_leads l
+       SET followup_due_at = NULL,
+           followup_step   = coalesce(l.followup_step, 0) + 1,
+           updated_at      = now()
+      FROM elegiveis e WHERE l.phone = e.ph
+    RETURNING l.phone, l.nome, l.exames, l.temperatura, l.proxima_acao, l.followup_step, l.resumo_interno
+  ),
+  registrado AS (
+    INSERT INTO ana_envios_log (phone, tipo, enviado_em)
+    SELECT r.phone, 'follow_up', v_agora FROM reservados r
+    RETURNING ana_envios_log.phone
+  )
+  SELECT r.phone, r.nome, r.exames, r.temperatura, r.proxima_acao, r.followup_step, r.resumo_interno
+    FROM reservados r WHERE (SELECT count(*) FROM registrado) >= 0;
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION public.ana_claim_followups(integer,timestamptz) FROM PUBLIC;
+DO $priv_fu$ DECLARE r text; BEGIN FOREACH r IN ARRAY ARRAY['anon','authenticated'] LOOP IF EXISTS(SELECT 1 FROM pg_roles WHERE rolname=r) THEN EXECUTE format('REVOKE ALL ON FUNCTION public.ana_claim_followups(integer,timestamptz) FROM %I',r); END IF; END LOOP; END $priv_fu$;
+
 COMMIT;
