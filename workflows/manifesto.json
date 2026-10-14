@@ -1,0 +1,31 @@
+{
+  "version": "continuidade-v2",
+  "prepared_on": "2026-10-14",
+  "production_deployed": false,
+  "workflows": {
+    "01-ANA-Atendimento-corrigido.json": {
+      "workflow_id": "XRUqhdO1QCyBBHbf",
+      "baseline_version_id": "07387b2d-f14a-450c-a015-ac41a2249985",
+      "source": "export privado fornecido em 2026-10-13",
+      "source_sha256": "6f1dd84e7a176b42e5b30820cd6336ca4308d3d2bf75495fafdaaa5711e80198"
+    },
+    "02-ANA-Followup-corrigido.json": {
+      "workflow_id": "Z0iuQURxQ4MvGZTT",
+      "baseline_version_id": "9abccf4b-2451-406c-987d-e9fd337a4767",
+      "source": "export privado fornecido em 2026-10-13",
+      "source_sha256": "d071bdb6d5f3f29fe3d822e22b5eb700501f80a7595dd8ef212ca2d36f69e736"
+    },
+    "06-ANA-Confirmacao-corrigida.json": {
+      "workflow_id": "UEbCnaDY9c5GbLeR",
+      "baseline_version_id": "dd3daee5-a523-414c-9072-6da35cf4aa9b",
+      "source": "export privado fornecido em 2026-10-13",
+      "source_sha256": "5cd73d29ee5071c00640cac83917cf56afb2c64230caf96a69e1f9da3a5e6fa1"
+    },
+    "BV-01-Boas-vindas-corrigidas.json": {
+      "workflow_id": "1rnwiIYsRCzPYe7D",
+      "baseline_version_id": "804c81cd-3433-4306-9117-4f7f2755d356",
+      "source": "export privado fornecido em 2026-10-13",
+      "source_sha256": "f9c663f5ad3af3a2a8892d6dfcfe661087b9419c3676eb20a8691df4fbd07dc7"
+    }
+  }
+}

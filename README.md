@@ -7,6 +7,19 @@
 Documentação revisada em **12/10/2026** a partir de 12 fluxos n8n (125 nós), configuração do banco, testes sintéticos e comparação com o manual anterior.
 
 
+
+## Continuidade e pausa humana — 14/10/2026
+
+Correções versionadas para ANA-01, ANA-02, ANA-06 e BV-01: trava comum de envio, correlação dos ecos por ID, pausa humana persistente e respostas que aproveitam o histórico. **A implantação no n8n e a atualização de ana_config ainda estão pendentes.** A instalação autenticada do MCP não equivale à publicação dos fluxos.
+
+- [Política de atendimento V2](conhecimento/continuidade-pausa-v2.md)
+- [Guia de implantação, operação e limites](docs/CONTINUIDADE_V2.md)
+- [Relatório desta revisão em HTML](auditorias/2026/2026-10-14.html)
+- [Templates sanitizados e versões de origem](workflows/manifesto.json)
+- [Registro da preparação](conhecimento/implantacao-2026-10-14.json)
+
+Validação local: 42 verificações de runtime, 23 testes do ML e 5 de publicação. Executar npm install --ignore-scripts e npm test. Os testes usam dados fictícios e não enviam mensagens a pacientes.
+
 ## Comece aqui
 
 

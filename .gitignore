@@ -9,3 +9,7 @@ logs/
 *credentials*.json
 *pinData*.json
 *.pem
+node_modules/
+tests/results/
+private/
+*.zip

@@ -1,0 +1,451 @@
+{
+  "name": "ANA-06 - Confirmacao de exame na vespera (09:00)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "a06-cron",
+      "name": "Todo dia util as 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -976,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM ana_confirmacoes_vespera();",
+        "options": {}
+      },
+      "id": "a06-busca",
+      "name": "Buscar exames do proximo dia util",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -768,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a06-loop",
+      "name": "Um paciente por vez",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -544,
+        304
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a06-fim",
+      "name": "Fim",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const DIAS = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',\n              'quinta-feira', 'sexta-feira', 'sábado'];\n\nconst SIGLAS = ['usg', 'us', 'rx', 'tc', 'rm', 'ecg', 'eeg', 'mapa', 'dna', 'psa', 'tsh', 'holter'];\n\nconst ACENTOS = {\n  'abdomen': 'abdômen', 'abdominal': 'abdominal', 'torax': 'tórax',\n  'prostata': 'próstata', 'obstetrico': 'obstétrico', 'obstetrica': 'obstétrica',\n  'maos': 'mãos', 'articulacao': 'articulação', 'coracao': 'coração',\n  'tireoide': 'tireoide', 'cervical': 'cervical', 'toxicologico': 'toxicológico', 'toxico': 'toxicológico',\n  'bacterioscopico': 'bacterioscópico', 'secrecao': 'secreção',\n  'espiro': 'espirometria', 'tv': 'transvaginal', 'morfologico': 'morfológico'\n};\n\nfunction primeiroNome(nome) {\n  const n = String(nome || '').trim().split(/\\s+/)[0] || '';\n  if (n.length < 2 || !/^[A-Za-zÀ-ÿ]+$/.test(n)) return '';\n  return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();\n}\n\nconst CANCELADO = /(cancel|desmarc|remarc|reagend|desist|adiou|adiad|n[aã]o vem|n[aã]o vir|n[aã]o compareceu|nao compareceu|faltou|transferi|mudou para|pendente|aguardando|verificar|conferir|erro)/i;\n\nconst INTERNOS = /\\b(solumed|poiares|particular|convenio|conv[êe]nio|encaixe|retorno)\\b/gi;\nconst ANCORA = /\\b(usg?|ultrassom|ultrassonografia|rx|raio[- ]?x|tc|tomografia|enterografia|resson[aâ]ncia|rm|ecg|eletro\\w*|eeg|holter|mapa|coleta|espiro\\w*|toxicol\\w*|papanicolau|preventivo|sexagem|romberg|doppler|check[- ]?up|densitom\\w*|mamografi\\w*|panor[aâ]mic\\w*|cone[- ]?beam|audiometri\\w*|ecocardio\\w*|ergom[ée]tric\\w*|bi[óo]psia|pun[çc][ãa]o|cari[óo]tipo|bacterioscopico|bacterioscópico|urina|fezes|tv|transvaginal|obst[ée]tric\\w*|morfol[óo]gic\\w*|tireoide|abdom\\w*|t[óo]rax|coluna|joelho|ombro|mandibula|mand[íi]bula|maxila|pr[óo]stata|mamas?)\\b/i;\n\nfunction nomeExame(evento) {\n  const bruto = String(evento || '').trim()\n    .replace(/check[-–]up/gi, 'CHECK UP')\n    .replace(/raio[-–]x/gi, 'RAIO X')\n    .replace(/cone[-–]beam/gi, 'CONE BEAM')\n    .replace(/,(?=\\S)/g, ', ');\n  if (!bruto) return 'exame';\n  const partes = bruto.split(/\\s*[-–]\\s*/).map(p => p.trim()).filter(Boolean);\n  let ex = partes.length > 1 ? partes[partes.length - 1] : bruto;\n  if (partes.length === 1) {\n    const m = ex.match(ANCORA);\n    ex = m ? ex.slice(m.index) : '';\n  }\n  const mAnc = ex.match(ANCORA);\n  if (mAnc && mAnc.index > 0 && !/\\d/.test(ex.slice(0, mAnc.index))) ex = ex.slice(mAnc.index);\n  ex = ex.replace(/^\\d{1,2}\\s*[hH:]\\s*\\d{0,2}\\s*/, '').replace(/[()]/g, ' ')\n         .replace(INTERNOS, ' ').replace(/[.\\s]+$/, '')\n         .replace(/\\s+/g, ' ').trim();\n  if (ex.length < 3) return 'exame';\n  ex = ex.toLowerCase().split(' ').map(function (p) {\n    const limpa = p.replace(/[^a-zà-ÿ]/g, '');\n    if (ACENTOS[limpa]) return p.replace(limpa, ACENTOS[limpa]);\n    return p;\n  }).join(' ');\n  ex = ex.split(' ').map(p => SIGLAS.indexOf(p) >= 0 ? p.toUpperCase() : p).join(' ');\n  return ex;\n}\n\nconst j = $input.first().json;\nconst nome = primeiroNome(j.nome);\nconst saudacao = nome ? ('Oi, ' + nome + '!') : 'Oi!';\nconst pac = primeiroNome(j.paciente);\nconst deQuem = (pac && nome && pac.toLowerCase() !== nome.toLowerCase())\n  ? (' — paciente *' + String(j.paciente).trim() + '*')\n  : (!nome && pac ? (' — paciente *' + String(j.paciente).trim() + '*') : '');\nconst exame = nomeExame(j.evento);\nif (!exame || exame === 'exame') return [{json:{skip:true,phone:j.phone}}];\nif (CANCELADO.test(String(j.evento || '')) || CANCELADO.test(exame)) return [{json:{skip:true,phone:j.phone}}];\n\nconst partesData = String(j.data).split('-').map(Number);\nconst alvo = Date.UTC(partesData[0], partesData[1] - 1, partesData[2]);\nconst dataBr = String(partesData[2]).padStart(2, '0') + '/' + String(partesData[1]).padStart(2, '0');\n\nconst agoraSP = new Date(Date.now() - 3 * 60 * 60 * 1000);\nconst hoje = Date.UTC(agoraSP.getUTCFullYear(), agoraSP.getUTCMonth(), agoraSP.getUTCDate());\nconst quando = (alvo - hoje) === 86400000\n  ? 'de amanhã'\n  : ('de ' + DIAS[new Date(alvo).getUTCDay()]);\n\nlet horario = '';\nif (/^(?:[01]\\d|2[0-3]):[0-5]\\d$/.test(j.hora || '')) horario = ', às *' + j.hora + '*';\nelse if (String(j.turno || '').indexOf('manh') === 0) horario = ', de *manhã*';\nelse if (j.turno) horario = ', à *tarde*';\n\nconst detalhe = '*' + exame + '*, dia *' + dataBr + '*' + horario + deQuem;\n\nconst v = Number(String(j.phone).slice(-3)) % 3;\nlet texto;\nif (v === 0) {\n  texto = saudacao + ' 😊 Aqui é a Ana, da Total Quality.\\n\\n'\n        + 'Na nossa agenda consta um exame ' + quando + ': ' + detalhe + '.\\n\\n'\n        + 'Você consegue vir? Se precisar remarcar, me avise para encaminhar à equipe.';\n} else if (v === 1) {\n  texto = saudacao + ' Tudo bem? É a Ana, da Total Quality 😊\\n\\n'\n        + 'Está reservado na nossa agenda o exame ' + quando + ': ' + detalhe + '.\\n\\n'\n        + 'Tá tudo certo pra você vir? Se precisar mudar a data, me avise para a equipe verificar outra data.';\n} else {\n  texto = saudacao + ' Ana aqui, da Total Quality 🙂\\n\\n'\n        + 'Passando pra combinar o exame que está na nossa agenda ' + quando + ': ' + detalhe + '.\\n\\n'\n        + 'Você consegue comparecer?';\n}\n\ntexto += '\\n\\nSe esse agendamento não for seu, me avise para a equipe conferir. '\n       + 'A gente fica na *Av. Anchieta, 1010* — Centro. Chega uns 15 minutinhos antes. '\n       + 'E se quiser as orientações de preparo, é só me pedir.';\n\nreturn [{ json: { phone: j.phone, nome: j.nome, data: j.data, hora: j.hora,\n                  exame: exame, texto: texto } }];"
+      },
+      "id": "a06-msg",
+      "name": "Montar mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $json.guard.payload.phone, text: $json.guard.payload.texto, delay: 0, linkPreview: false }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "a06-envia",
+      "name": "Enviar pelo WhatsApp (Evolution)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        432
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH p AS (SELECT $1::jsonb j), ins AS (INSERT INTO ana_envios_log(phone,tipo) SELECT j->>'phone','lembrete_vespera' FROM p RETURNING phone),u AS (UPDATE ana_leads l SET agendamento=COALESCE(l.agendamento,'{}'::jsonb)||jsonb_build_object('confirmacao_enviada_em',now()),proxima_acao=CASE WHEN l.bot_ativo=true THEN 'aguardar_confirmacao_vespera' ELSE l.proxima_acao END,updated_at=now() FROM p,ins WHERE l.phone=ins.phone AND l.agendamento->>'data'=p.j->>'data' AND l.agendamento->>'hora'=p.j->>'hora' RETURNING l.phone) SELECT count(*)::int AS applied FROM u;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify($('Montar mensagem').item.json)] }}"
+        }
+      },
+      "id": "a06-marca",
+      "name": "Registrar envio",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        128,
+        432
+      ],
+      "onError": "stopWorkflow"
+    },
+    {
+      "parameters": {
+        "amount": 90,
+        "unit": "seconds"
+      },
+      "id": "a06-wait",
+      "name": "Aguardar 20s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        432
+      ]
+    },
+    {
+      "id": "3262e02b-9f08-4001-98a3-1bd01190aa5b",
+      "name": "Lembrete válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed1da7a8-0f0c-408d-be94-176e12c8585d",
+              "leftValue": "={{ $json.skip !== true && typeof $json.texto === 'string' && $json.texto.length > 0 && /^(?:[01]\\d|2[0-3]):[0-5]\\d$/.test($json.hora || '') }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1320,
+        1160
+      ]
+    },
+    {
+      "id": "3f656b35-c9b9-45b5-8455-8cac9235a439",
+      "name": "Reservar envio com trava",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ana_runtime_claim($1::jsonb) AS guard;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify(({...$('Montar mensagem').item.json,origin:'ANA-06',send_key:'ANA-06:'+String($env.EVOLUTION_INSTANCE)+':'+$('Montar mensagem').item.json.phone+':'+$('Montar mensagem').item.json.data+':'+$('Montar mensagem').item.json.hora,appointment_date:$('Montar mensagem').item.json.data,appointment_time:$('Montar mensagem').item.json.hora,owner:String($execution.id)}))] }}"
+        }
+      },
+      "position": [
+        1560,
+        1160
+      ]
+    },
+    {
+      "id": "e9a01e39-e203-42c3-9f27-4de05d9e53b4",
+      "name": "Envio autorizado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "76d0056a-f1f9-4c6f-a6de-9f86d9623d1a",
+              "leftValue": "={{ $json.guard.allowed === true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1800,
+        1160
+      ]
+    },
+    {
+      "id": "b40932b1-d52d-49ac-b190-42e0fb75212f",
+      "name": "Registrar resultado do envio",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ana_runtime_finish($1::jsonb) AS result;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify(({send_key:$('Reservar envio com trava').item.json.guard.payload.send_key,owner:$('Reservar envio com trava').item.json.guard.payload.owner,status_code:Number($json.statusCode)||0,provider_id:($json.body?.key?.id || $json.body?.data?.key?.id || ''),error:!!($json.error || $json.body?.error)}))] }}"
+        }
+      },
+      "position": [
+        600,
+        1320
+      ]
+    },
+    {
+      "id": "afc8ecbe-6b18-4603-89a8-f05472614428",
+      "name": "API aceitou a mensagem?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bb8d0614-4eaa-4164-8d92-c6621352494d",
+              "leftValue": "={{ $json.result.accepted === true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        840,
+        1320
+      ]
+    }
+  ],
+  "connections": {
+    "Todo dia util as 09:00": {
+      "main": [
+        [
+          {
+            "node": "Buscar exames do proximo dia util",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar exames do proximo dia util": {
+      "main": [
+        [
+          {
+            "node": "Um paciente por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Um paciente por vez": {
+      "main": [
+        [
+          {
+            "node": "Fim",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar mensagem": {
+      "main": [
+        [
+          {
+            "node": "Lembrete válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar pelo WhatsApp (Evolution)": {
+      "main": [
+        [
+          {
+            "node": "Registrar resultado do envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar envio": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 20s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 20s": {
+      "main": [
+        [
+          {
+            "node": "Um paciente por vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar envio com trava": {
+      "main": [
+        [
+          {
+            "node": "Envio autorizado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio autorizado?": {
+      "main": [
+        [
+          {
+            "node": "Enviar pelo WhatsApp (Evolution)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aguardar 20s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar resultado do envio": {
+      "main": [
+        [
+          {
+            "node": "API aceitou a mensagem?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API aceitou a mensagem?": {
+      "main": [
+        [
+          {
+            "node": "Registrar envio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aguardar 20s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lembrete válido?": {
+      "main": [
+        [
+          {
+            "node": "Reservar envio com trava",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aguardar 20s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/Sao_Paulo"
+  },
+  "pinData": {}
+}

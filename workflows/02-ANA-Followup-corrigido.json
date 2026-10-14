@@ -1,0 +1,453 @@
+{
+  "name": "ANA — 02 Follow-up Carinhoso (Total Quality)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "name": "A cada 5 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        160
+      ],
+      "id": "4caa6dbe-1986-4535-8d3d-4647c7784c5d"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT f.*,\n       COALESCE(NULLIF(array_to_string(ARRAY(SELECT jsonb_array_elements_text(f.exames)), '; '), ''), '') AS exames_txt,\n       ana_exame_laboratorial(array_to_string(ARRAY(SELECT jsonb_array_elements_text(f.exames)), '; ')) AS tem_lab\nFROM ana_claim_followups() f",
+        "options": {}
+      },
+      "name": "Buscar Leads com Follow-up Devido",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -448,
+        160
+      ],
+      "id": "a2897de2-cc72-4a58-ba17-15e7eeb69f3a"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Um Lead por Vez",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        160
+      ],
+      "id": "201a7cb5-f63e-4172-8496-1403a83f345d"
+    },
+    {
+      "parameters": {},
+      "name": "Fim do Ciclo",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "50f7e4a9-a483-4214-9767-ad90a6f8543e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ typeof $json.mensagem === 'string' && $json.mensagem.trim().length > 0 }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Gerou Mensagem?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        272
+      ],
+      "id": "a01dd6ff-391f-472c-af1f-2f50021247ed"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH p AS (SELECT $1::jsonb j),u AS (UPDATE ana_leads l SET followup_due_at=NULLIF(p.j->>'followup_due','')::timestamptz,proxima_acao=p.j->>'proxima_acao',updated_at=now() FROM p WHERE l.phone=p.j->>'phone' AND l.bot_ativo=true AND l.opt_out IS NOT TRUE AND l.last_patient_msg_at IS NOT DISTINCT FROM NULLIF(p.j->>'patient_snapshot','')::timestamptz AND NOT EXISTS(SELECT 1 FROM ana_runtime_observed o WHERE o.phone=l.phone AND o.state='pending') RETURNING l.phone) SELECT count(*)::int AS applied FROM u;",
+        "options": {
+          "queryReplacement": "={{ [JSON.stringify({...JSON.parse($('Montar Follow-up').item.json.pg_lead),patient_snapshot:$('Um Lead por Vez').item.json.last_patient_msg_at||null})] }}"
+        }
+      },
+      "name": "Atualizar Lead FU",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1344,
+        272
+      ],
+      "id": "670b054d-f19e-4300-9889-63ec6cc7d698"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_URL }}/message/sendText/{{ $env.EVOLUTION_INSTANCE }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_APIKEY }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ number: $json.guard.payload.phone, text: $json.guard.payload.texto, delay: 0, linkPreview: false }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "name": "Enviar Follow-up",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        272
+      ],
+      "id": "e0b73a91-cbb2-43ed-b4df-8a2dc4b7797a",
+      "onError": "continueRegularOutput",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead  = $input.first().json;\nconst phone = lead.phone;\nconst step  = Number(lead.followup_step) || 1;\n\nfunction primeiroNome(n) {\n  const p = String(n || '').trim().split(/\\s+/)[0] || '';\n  if (p.length < 2 || !/^[A-Za-zÀ-ÿ]+$/.test(p)) return '';\n  return p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();\n}\nconst nome = primeiroNome(lead.nome);\n\nconst lista = String(lead.exames_txt || '').split('; ').map(s => s.trim()).filter(Boolean);\nconst exame = lista.length === 1 ? lista[0]\n            : lista.length === 2 ? (lista[0] + ' e ' + lista[1])\n            : '';\n\nconst oi      = nome ? ('Oi, ' + nome) : 'Oi';\nconst orcDo   = exame ? ('o orçamento de *' + exame + '*') : 'o orçamento que te passei';\nconst oExame  = exame ? ('*' + exame + '*') : 'o exame';\nconst sobreEx = exame ? ('sobre *' + exame + '*') : 'sobre o seu exame';\nconst coleta  = lead.tem_lab === true\n  ? '\\n- Para exames de laboratório, também fazemos *coleta domiciliar*' : '';\n\nconst textos = {\n1: oi + '! Ficou alguma dúvida sobre ' + orcDo + '?',\n2: oi + '! Se ainda quiser fazer ' + oExame + ', qual dia ou período funciona melhor para você? Encaminho a preferência à equipe.',\n3: oi + '. Quer ajuda com alguma dúvida sobre valor, horário ou preparo? Se preferir não receber lembretes, responda *parar*.',\n4: oi + '! Você ainda deseja seguir com o agendamento de ' + oExame + '?',\n5: oi + '. Vou encerrar os lembretes ' + sobreEx + '. Quando precisar, pode escrever por aqui. A equipe da Total Quality fica à disposição.'\n};\n\nconst mensagem = textos[step];\nif (!mensagem) return [{ json: { skip: true, phone } }];\n\nconst gaps = { 1: 2, 2: 4, 3: 7, 4: 16, 5: null };\nconst due = gaps[step] ? new Date(Date.now() + gaps[step] * 86400000).toISOString() : null;\n\nreturn [{ json: {\n  phone, mensagem, step,\n  pg_msg: JSON.stringify({ phone, conteudo: mensagem,\n    dados: { evento: 'follow_up', passo: step, origem: 'ANA-02', modelo: 'texto fixo' } }),\n  pg_lead: JSON.stringify({ phone, step, followup_due: due,\n    proxima_acao: step === 5 ? 'encerrar' : 'aguardar_resposta' }),\n} }];"
+      },
+      "id": "b9d692ee-9786-4c77-b8f9-06110e918a32",
+      "name": "Montar Follow-up",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        432
+      ]
+    },
+    {
+      "id": "141da0b0-7385-4f29-a19f-0c9ba50b0062",
+      "name": "Reservar envio com trava",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ana_runtime_claim($1::jsonb) AS guard;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify(({...$('Montar Follow-up').item.json,origin:'ANA-02',texto:$('Montar Follow-up').item.json.mensagem,send_key:'ANA-02:'+String($env.EVOLUTION_INSTANCE)+':'+$('Montar Follow-up').item.json.phone+':'+String($('Um Lead por Vez').item.json.last_patient_msg_at||'sem-contato')+':'+$('Montar Follow-up').item.json.step,patient_snapshot:$('Um Lead por Vez').item.json.last_patient_msg_at||null,dados:JSON.parse($('Montar Follow-up').item.json.pg_msg).dados,owner:String($execution.id)}))] }}"
+        }
+      },
+      "position": [
+        600,
+        1320
+      ]
+    },
+    {
+      "id": "e56c94d8-1c7d-44c5-860f-4a91fb5df676",
+      "name": "Envio autorizado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "701f537d-f77b-4188-8ad1-a3575e5e807a",
+              "leftValue": "={{ $json.guard.allowed === true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        840,
+        1320
+      ]
+    },
+    {
+      "id": "430cea6e-011e-437b-9791-d815c6ecabd2",
+      "name": "Registrar resultado do envio",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ana_runtime_finish($1::jsonb) AS result;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify(({send_key:$('Reservar envio com trava').item.json.guard.payload.send_key,owner:$('Reservar envio com trava').item.json.guard.payload.owner,status_code:Number($json.statusCode)||0,provider_id:($json.body?.key?.id || $json.body?.data?.key?.id || ''),error:!!($json.error || $json.body?.error)}))] }}"
+        }
+      },
+      "position": [
+        1080,
+        1320
+      ]
+    },
+    {
+      "id": "d5f05a14-6816-45e9-bd13-ce2d04fa5630",
+      "name": "API aceitou a mensagem?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "68214c57-890d-4452-8d37-eb8422f2e328",
+              "leftValue": "={{ $json.result.accepted === true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1320,
+        1320
+      ]
+    },
+    {
+      "id": "1862be9e-e346-4a39-98d5-e82b4b566d76",
+      "name": "Suspender follow-up para revisão",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH u AS (UPDATE ana_leads SET followup_due_at=NULL,updated_at=now() WHERE phone=($1::jsonb->>'phone') AND last_patient_msg_at IS NOT DISTINCT FROM NULLIF($1::jsonb->'payload'->>'patient_snapshot','')::timestamptz RETURNING phone) SELECT count(*)::int AS suspended FROM u;",
+        "options": {
+          "queryBatching": "independently",
+          "queryReplacement": "={{ [JSON.stringify($('Registrar resultado do envio').item.json.result)] }}"
+        }
+      },
+      "position": [
+        1560,
+        1320
+      ]
+    }
+  ],
+  "connections": {
+    "A cada 5 min": {
+      "main": [
+        [
+          {
+            "node": "Buscar Leads com Follow-up Devido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Leads com Follow-up Devido": {
+      "main": [
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Um Lead por Vez": {
+      "main": [
+        [
+          {
+            "node": "Fim do Ciclo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerou Mensagem?": {
+      "main": [
+        [
+          {
+            "node": "Reservar envio com trava",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Lead FU": {
+      "main": [
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Registrar resultado do envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Gerou Mensagem?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar envio com trava": {
+      "main": [
+        [
+          {
+            "node": "Envio autorizado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio autorizado?": {
+      "main": [
+        [
+          {
+            "node": "Enviar Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar resultado do envio": {
+      "main": [
+        [
+          {
+            "node": "API aceitou a mensagem?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API aceitou a mensagem?": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Lead FU",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Suspender follow-up para revisão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suspender follow-up para revisão": {
+      "main": [
+        [
+          {
+            "node": "Um Lead por Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/Sao_Paulo"
+  },
+  "pinData": {}
+}

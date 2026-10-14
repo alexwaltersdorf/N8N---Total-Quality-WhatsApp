@@ -1,0 +1,11 @@
+{
+  "name": "ana-total-quality",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "test": "node tests/runtime.cjs && node ml/tests.cjs && node tests/publicacao.cjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.9"
+  }
+}

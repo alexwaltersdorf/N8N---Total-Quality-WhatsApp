@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-14
+
+### Preparado e versionado; publicação no n8n pendente
+
+- Quatro templates corrigidos com controle compartilhado de duplicidade, pausa humana persistente e aceitação do provedor antes de registrar a resposta.
+- Política Continuidade V2: reaproveitar histórico, evitar perguntas repetidas, permitir silêncio e preservar dados anteriores e agendamentos reais.
+- Migração com RLS, testes sintéticos, preparação privada com verificação de versão e guia de implantação/rollback.
+- Horários e itens de catálogo divergentes permanecem pendentes de validação factual.
+- 70 verificações locais aprovadas (42 runtime, 23 ML, 5 publicação), sem mensagens para pacientes. Testes locais não comprovam implantação no n8n.
+
 ## 2026-10-12
 
 ### Auditados e documentados
