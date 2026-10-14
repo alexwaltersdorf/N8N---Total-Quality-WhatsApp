@@ -1,27 +1,18 @@
 [
   {
-    "key": "catalogo.exames",
-    "source": "Skill da clínica x ANA-04",
-    "status": "draft",
-    "content": "PENDENTE: validar catálogo; referências divergem sobre mamografia e densitometria. Não aprovar este rascunho como catálogo.",
-    "reviewer": null,
-    "reviewed_at": null,
-    "valid_until": null
-  },
-  {
     "key": "convenios.regras",
-    "source": "Necessita tabela oficial vigente",
+    "content": "PENDENTE: cobertura por exame e modalidade, necessidade de autorização, valores, descontos e reembolso dos credenciamentos vigentes. Confirmar com a operadora/equipe; nomes de convênios em análise aguardam aprovação e não devem ser apresentados como aceitos.",
     "status": "draft",
-    "content": "PENDENTE: cobertura e condições por exame dos credenciamentos Solumedi, Cartão de Todos e Lead Saúde; autorização, plano/modalidade, descontos, valores e reembolso. A lista de nomes foi confirmada separadamente.",
+    "source": "Necessita tabela oficial vigente",
     "reviewer": null,
     "reviewed_at": null,
     "valid_until": null
   },
   {
-    "key": "preparo.protocolos",
-    "source": "Necessita protocolo clínico aprovado",
+    "key": "preparo.excecoes",
+    "content": "PENDENTE DE INSTRUÇÃO LOCAL: protocolos pediátricos e especiais; EEG com sono/privação; regras operacionais próprias para MAPA; preparo específico para tomografia com contraste e situações clínicas especiais. Encaminhar à recepção enquanto não houver orientação confirmada por exame e modalidade.",
     "status": "draft",
-    "content": "PENDENTE: homologação pela Total Quality das fontes externas pesquisadas e aprovação de protocolo por exame/modalidade, faixa etária, versão e responsável clínico. Rascunhos externos não são instruções liberadas para pacientes.",
+    "source": "Necessita protocolos locais por exame",
     "reviewer": null,
     "reviewed_at": null,
     "valid_until": null

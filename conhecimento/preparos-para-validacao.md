@@ -1,65 +1,47 @@
-# Preparos: fontes pesquisadas para validação clínica
+# Preparos aprovados para a Ana
 
-Pesquisa em 14/10/2026. Estas fontes pertencem às instituições indicadas. Nenhuma foi declarada homologada pela Total Quality. Os sete registros estão como draft e ficam fora do contexto aprovado enviado ao agente. Nenhum protocolo clínico foi liberado automaticamente.
-
-O catálogo legado foi usado somente para direcionar a pesquisa; não é uma nova confirmação da oferta. Mamografia e densitometria continuam pendentes. O levantamento inicial não cobre todo o catálogo.
+A clínica aprovou estas orientações em 14/10/2026. Cada uma vale somente para o exame, modalidade e perfil descritos. A referência externa foi adotada pela clínica nesta revisão; isso não significa que a referência seja uma política geral para outros exames.
 
 ## Ultrassonografia de abdome total
 
-Fonte: [FIDI](https://fidi.org.br/docs/exames/preparos/ultrassom/preparo_para_exame_de_ultrassom_de_abdome_total.pdf?_t=1711627082). Consulta: 2026-10-14.
+Para adultos acima de 12 anos: jejum de 6 horas; água é permitida. Beber 6 copos de água 1 hora antes e manter a bexiga cheia, sem urinar. Crianças e pacientes com condição especial devem confirmar com a recepção. Não suspender medicamentos por conta própria.
 
-A referência distingue adultos e crianças. Para maiores de 12 anos, informa seis horas de jejum, permitindo água, e orienta enchimento da bexiga. A clínica precisa validar duração do jejum, volume de líquidos, restrições individuais e protocolo pediátrico.
+Fonte aprovada: [FIDI — preparo para ultrassom de abdome total](https://fidi.org.br/docs/exames/preparos/ultrassom/preparo_para_exame_de_ultrassom_de_abdome_total.pdf?_t=1711627082).
 
-**Validação necessária:** Não aplicar automaticamente jejum, volume de água ou orientações de medicamentos. Há divergência com outra fonte institucional.
+O protocolo comparativo do HC-UFPE/HU Brasil diverge e foi retirado do conteúdo ativo para evitar a mistura de instruções.
 
-## Ultrassonografia abdominal — comparação de protocolo
+## Holter 24 horas
 
-Fonte: [HC-UFPE / HU Brasil](https://www.gov.br/hubrasil/pt-br/hospitais-universitarios/regiao-nordeste/hc-ufpe/saude/exames/preparo-de-exames/PREPAROULTRASONOGRAFIAABDOMINALsite.pdf). Consulta: 2026-10-14.
+Nas 24 horas anteriores, não aplicar cremes, pomadas, bronzeador ou produtos oleosos no tórax. Usar camisa com abertura frontal ou camiseta larga. Levar o pedido médico; exames anteriores são úteis se disponíveis. Devolver o aparelho no horário combinado. Não interromper medicamentos sem orientação do médico assistente.
 
-O documento utiliza oito horas de jejum e inclui medicamento, divergindo da referência FIDI. Não é um protocolo homologado da Total Quality.
+Fonte: [Fleury — Holter e MAPA](https://www.fleury.com.br/exames/holter-e-mapa-de-24-horas).
 
-**Validação necessária:** Responsável clínico deve escolher o protocolo local; não combinar instruções das duas fontes nem reproduzir prescrição.
+## MAPA 24 horas
 
-## Holter e MAPA de 24 horas — exame combinado na fonte
+As instruções específicas de Holter não se aplicam automaticamente ao MAPA. Confirmar com a equipe como ocorrerão instalação, retirada e atividades durante o registro.
 
-Fonte: [Fleury](https://www.fleury.com.br/exames/holter-e-mapa-de-24-horas). Consulta: 2026-10-14.
+## Eletroencefalograma (EEG)
 
-A referência orienta apresentar pedido e resultados anteriores, usar roupa adequada à instalação e evitar produtos oleosos no tórax antes do Holter. O retorno para retirada do equipamento deve ser combinado com o serviço.
+Lavar o cabelo no dia anterior, não usar creme ou óleo capilar e comparecer com o cabelo seco. A orientação consultada permite alimentação normal. EEG durante o sono ou com privação de sono exige instrução específica da clínica; sem essa instrução, encaminhar à recepção. Não orientar privação de sono por conta própria.
 
-**Validação necessária:** Validar protocolos separados de Holter e MAPA, idade atendida, cuidados com aparelho e horários locais. Não extrapolar restrições do exame combinado para MAPA isolado.
+Fonte: [Hospital Israelita Albert Einstein — EEG](https://www.einstein.br/especialidades/neurologia/exames-tratamentos/eletroencefalograma).
 
-## Eletroencefalograma
+## Eletrocardiograma (ECG) de repouso
 
-Fonte: [HC-UFPE / HU Brasil](https://www.gov.br/hubrasil/pt-br/hospitais-universitarios/regiao-nordeste/hc-ufpe/saude/exames/preparo-de-exames/preparoexames_ELETROENCEFALOGRAMAEEG.pdf). Consulta: 2026-10-14.
+Para adultos, não é necessário preparo específico na referência consultada; usar roupa que facilite o acesso ao tórax. Casos pediátricos ou com marca-passo devem ser confirmados com a recepção; levar a carteirinha do dispositivo se houver.
 
-A referência orienta cabelo lavado e seco, sem creme ou óleo. O documento também contém regras para exame em sono, que dependem da modalidade solicitada.
+Fonte: [Fleury — Eletrocardiograma](https://www.fleury.com.br/exames/eletrocardiograma).
 
-**Validação necessária:** Validar exame em vigília/sono e faixa etária. Não orientar privação de sono automaticamente nem importar documentos específicos do hospital.
+## Hemograma isolado
 
-## Eletrocardiograma de repouso
+Após dieta leve, a referência aprovada diz que o jejum não é necessário; caso contrário, sugere 3 horas. Evitar realizar após grande esforço físico. Se houver outros exames no mesmo pedido, não generalizar esta orientação: confirmar o preparo do conjunto com a recepção/laboratório.
 
-Fonte: [Fleury](https://detalhes.fleury.com.br/flsp/exame/eletrocardiograma-de-repouso). Consulta: 2026-10-14.
+Fonte: [Fleury — Hemograma](https://www.fleury.com.br/exames/hemograma).
 
-Para adultos, a fonte informa ausência de preparo específico e recomenda roupa que facilite acesso ao tórax. Para portadores de marca-passo, menciona documentação do dispositivo.
+## Tomografia com contraste e situações especiais
 
-**Validação necessária:** Confirmar protocolo da clínica, pedido médico e atendimento pediátrico. Não importar prazo, preço ou regras de agendamento do outro serviço.
+Encaminhar o preparo à recepção/equipe de radiologia. A Ana não deve indicar dose, início, suspensão ou alteração de medicamentos, nem definir jejum/contraste sem protocolo individual confirmado pela clínica.
 
-## Hemograma, sangue total
+## Regra geral de segurança
 
-Fonte: [Fleury](https://detalhes.fleury.com.br/flsp/exame/hemograma-sangue-total). Consulta: 2026-10-14.
-
-A fonte diferencia alimentação leve de outras refeições e desaconselha realizar a coleta logo após esforço físico intenso. Essa orientação se refere ao hemograma isolado.
-
-**Validação necessária:** Validar com o laboratório executor. Não estabelecer jejum único para todo exame de sangue nem extrapolar a pedidos com vários exames.
-
-## Tomografia com contraste — fonte não adotada para orientação automática
-
-Fonte: [HC-UFPE / HU Brasil](https://www.gov.br/hubrasil/pt-br/hospitais-universitarios/regiao-nordeste/hc-ufpe/saude/exames/preparo-de-exames/PreparoTomografiaContrastesite.pdf). Consulta: 2026-10-14.
-
-O documento consultado contém prescrição e alteração de medicamentos. Não foi adotado como instrução automática para a Ana.
-
-**Validação necessária:** Exige protocolo local do responsável clínico, triagem e decisão individual. Não recomendar medicamento, dose, suspensão ou alteração de tratamento.
-
-## Como liberar um preparo
-
-O responsável clínico deve aprovar texto final próprio da clínica, exame e modalidade exatos, faixa etária, exceções, fonte e versão, nome do revisor, data de aprovação e próxima revisão. Não basta aprovar o domínio de um site. Após aprovação, registrar o protocolo em ana_runtime_kb com status approved e reviewed_at; protocolos vencidos não são carregados. Não reutilizar medicamentos ou restrições de outro serviço por semelhança de exame.
+Não misturar fontes divergentes, não extrapolar uma orientação para outro exame e não recomendar início, interrupção ou alteração de medicamentos. Quando faltar protocolo específico aprovado ou houver condição especial, a Ana deve encaminhar à equipe.
