@@ -1,7 +1,7 @@
 {
   "date": "2026-10-14",
   "production_deployed": true,
-  "approved_factual_records": 5,
+  "approved_factual_records": 6,
   "draft_records": null,
   "external_preparation_sources": 7,
   "clinical_protocols_approved": 6,
@@ -25,15 +25,22 @@
       "versionId": "bd2f0ba8-8624-43a0-b957-98553a3df855",
       "nodeName": "Montar Análise",
       "change": "Fatos clínicos e preparos aprovados."
+    },
+    {
+      "workflowId": "XRUqhdO1QCyBBHbf",
+      "versionId": "93bb5873-aa8a-4fed-ae29-fb777f0830c5",
+      "nodeName": "Montar Payload",
+      "change": "Usa valor aprovado para consultas e não infere desconto Pix."
     }
   ],
   "patient_messages_sent_by_tests": 0,
   "pending": [
     "Cobertura, autorização, valores e regras por plano e exame.",
-    "Protocolos clínicos locais com responsável/versionamento para exceções: pediatria, EEG com sono/privação, MAPA e tomografia com contraste."
+    "Protocolos clínicos locais com responsável/versionamento para exceções: pediatria, EEG com sono/privação, MAPA e tomografia com contraste.",
+    "O valor Pix de R$ 270,00 que consta na tabela de preços não foi confirmado nesta atualização; a Ana informa apenas R$ 300,00 por consulta."
   ],
   "publication_checks": 6,
-  "verified_at": "2026-10-14 13:49:25 UTC",
+  "verified_at": "2026-10-14 15:41:14 UTC",
   "approved_preparation_records": 7,
   "backup_event": "knowledge_base_approval_backup (ana_runtime_audit)",
   "db_apply_execution": "199071",
@@ -48,5 +55,9 @@
     "preparo.tomografia_contraste.limite",
     "preparo.ultrassom.abdome_total"
   ],
-  "previous_backup_key": "system_prompt_backup_fatos_20261014_844ef28c16c6ae382437dcfd036d94de"
+  "previous_backup_key": "system_prompt_backup_fatos_20261014_844ef28c16c6ae382437dcfd036d94de",
+  "specialty_price_record": "clinica.especialidades.consultas",
+  "specialty_price_update_execution": "199698",
+  "specialty_price_readback_exact": true,
+  "workflow_ana01_version": "93bb5873-aa8a-4fed-ae29-fb777f0830c5"
 }
