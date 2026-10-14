@@ -1,7 +1,6 @@
 # Continuidade V2 — repetição e pausa humana
 
-Preparado em 14/10/2026. **Implantação no n8n e alteração de ana_config ainda pendentes.**
-O MCP do n8n foi instalado e autenticado localmente; esta revisão não afirma execução ou publicação no ambiente.
+**Implantado em 14/10/2026**, com leitura de verificação às 08:00 (America/Sao_Paulo). ANA-01, ANA-02, ANA-06 e BV-01 estão ativos nas versões registradas em [evidências da implantação](../conhecimento/implantacao-2026-10-14.json). A base ativa foi atualizada com backup e comparação de hash.
 
 ## Problema e comportamento esperado
 
@@ -20,19 +19,19 @@ A versão anterior podia classificar a mensagem da atendente pelo campo source, 
 
 [Templates](../workflows/manifesto.json) abrangem quatro fluxos de envio. Estão inativos e sem vínculos privados. Não importar diretamente em produção: webhook e planilha contêm marcadores.
 
-[Migração](../runtime/database.sql) cria quatro tabelas de runtime e quatro funções; cria também a tabela legada de boas-vindas somente se ausente, com acesso privado. RLS e revogação de acesso público protegem os registros. A conta usada pelo n8n deve ser a proprietária dos objetos ou receber permissões e políticas privadas adequadas. O script pressupõe schema public, conforme os exports; conferir antes de executar.
+[Migração](../runtime/database.sql) cria quatro tabelas de runtime e cinco funções (quatro de runtime e a atualização de ana_claim_followups); cria também a tabela legada de boas-vindas somente se ausente, com acesso privado. RLS e revogação de acesso público protegem os registros. A conta usada pelo n8n deve ser a proprietária dos objetos ou receber permissões e políticas privadas adequadas. O script pressupõe schema public, conforme os exports; conferir antes de executar.
 
 [Preparador](../scripts/preparar-atualizacao.cjs) recupera credenciais, webhook, planilha e autenticação HTTP de um export privado da mesma versão. Recusa versão divergente. Nenhum segredo é necessário no GitHub.
 
 ## Implantação
 
 1. Exportar os quatro fluxos atuais e a versão publicada, guardar backup privado, registrar IDs e versões. Ler o schema real, índices, função ana_claim_followups e prompt atual. Comparar com o manifesto. Não sobrescrever mudanças posteriores aos exports.
-2. Em ambiente isolado, executar a migração com a mesma conta/schema do n8n. Conferir tipos/colunas e índice único parcial de ana_mensagens.message_id. O teste embarcado usa schema mínimo inferido; não substitui esta verificação.
+2. Em ambiente isolado, executar a migração com a mesma conta/schema do n8n. Conferir tipos/colunas e índice único parcial de ana_mensagens.message_id. O schema, os índices e os triggers foram conferidos nesta implantação. Para futuras mudanças, repetir a leitura: o teste embarcado não substitui o banco real.
 3. Preparar cada fluxo com o script, por exemplo:
    node scripts/preparar-atualizacao.cjs private/ana01-original.json private/ana01-v2.json
 4. Validar no n8n com dados fictícios e nós externos simulados, incluindo espera, loops e propagação de itens. Não executar os gatilhos de envio reais para testar.
 5. Antes da troca, suspender os quatro fluxos de envio e aguardar execuções antigas terminarem. Preservar webhooks e credenciais. Atualizar rascunhos e comparar nós/conexões antes de publicar. Registrar as versões resultantes e reativar somente os fluxos antes ativos.
-6. Atualizar ana_config.system_prompt com backup e comparação de hash: substituir somente o trecho delimitado ANA_CONTINUIDADE_V2_INICIO/FIM; na primeira aplicação, acrescentar o módulo. Preservar catálogo, preços, contexto e módulo Clareza V1. Não duplicar a política. O template ANA-01 também incorpora a política, portanto a integração deve manter uma única cópia efetiva no payload.
+6. Preparar a atualização com [preparar-base-conhecimento.cjs](../scripts/preparar-base-conhecimento.cjs), usando um arquivo privado do prompt atual. O script gera SQL que grava UTF-8 literal, evitando que o n8n interprete marcadores como {{NOME_CLINICA}}. Atualizar ana_config.system_prompt com backup e comparação de hash: substituir somente o trecho delimitado ANA_CONTINUIDADE_V2_INICIO/FIM; na primeira aplicação, acrescentar o módulo. Preservar catálogo, preços, contexto e módulo Clareza V1. Não duplicar a política. O template ANA-01 também incorpora a política, portanto a integração deve manter uma única cópia efetiva no payload.
 7. Ler de volta a configuração e os fluxos publicados. Registrar evidências sanitizadas em conhecimento/implantacao-2026-10-14.json. Somente após esta verificação marcar production_deployed e ana_config_updated como true.
 
 ## Operação e limites
@@ -43,12 +42,12 @@ O controle bloqueia repetição do mesmo evento e texto normalizado recente. A i
 
 [Consultas operacionais](../runtime/operacao.sql) mostram envios aceitos, falhos ou incertos e os motivos de bloqueio. Reservas abandonadas e status unknown exigem verificar o recibo do provedor antes de reconciliação. Não apagar a reserva nem reativar indiscriminadamente. A função finish só finaliza reservas; um unknown exige procedimento explícito de reconciliação após conferência, preservando auditoria.
 
-Monitorar: taxa de eventos duplicados, bloqueios por intervenção humana, envios incertos, tempo até retomada, respostas sem dados válidos e contatos proativos por dia. Esses indicadores complementam o ML existente; não são taxas medidas de produção nesta revisão.
+Monitorar: taxa de eventos duplicados, bloqueios por intervenção humana, envios incertos, tempo até retomada, respostas sem dados válidos e contatos proativos por dia. Esses indicadores complementam o ML existente; não são taxas medidas de produção nesta revisão. ana_envios_log conserva o registro antecipado das reservas de follow-up; medir aceitação pelo provedor em ana_runtime_outbox, com status accepted, para não confundir tentativa com envio aceito.
 
 Horários e alguns itens do catálogo divergem entre fontes. Estão em [pendências factuais](../conhecimento/pendencias-factuais-v2.json), sem promoção para fatos aprovados. A equipe deve validar fonte, vigência e preparo clínico.
 
 ## Validação e rollback
 
-Executar npm install --ignore-scripts e npm test com Node.js. São 42 verificações de runtime em PostgreSQL embarcado, 23 testes do ML existente e 5 de publicação e recuperação de vínculos privados. Nenhum teste manda WhatsApp. Não foi simulada concorrência de várias conexões nem executado o motor n8n.
+Executar npm install --ignore-scripts e npm test com Node.js. São 45 verificações de runtime em PostgreSQL embarcado, 23 testes do ML existente e 6 de publicação e recuperação de vínculos privados. Também passaram seis cenários no motor n8n (serviços externos simulados) e um ensaio de duplicidade/eco/pausa no PostgreSQL 17.6 real, integralmente revertido. A espera de 90 segundos do ANA-06 foi omitida apenas no teste e restaurada antes da publicação. Nenhum teste mandou WhatsApp. Não foi simulada concorrência de várias conexões.
 
 Em falha de implantação, manter os envios suspensos, restaurar versões privadas e prompt anterior com conferência de hash, avaliar o que já foi aceito pela Evolution e só então reativar. Preservar tabelas de controle e auditoria: apagá-las perde a memória de duplicidade. A reversão dos fluxos remove as proteções V2.

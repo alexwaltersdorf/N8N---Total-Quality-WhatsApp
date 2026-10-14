@@ -1,11 +1,137 @@
 {
   "version": "continuidade-v2",
-  "prepared_on": "2026-10-14",
+  "deployed_on": "2026-10-14",
+  "verified_at": "2026-10-14T11:00:25.960Z",
   "github_updated": true,
-  "production_deployed": false,
-  "ana_config_updated": false,
-  "patient_messages_sent": 0,
-  "reason": "MCP instalado e autenticado. A conversa ativa precisa recarregar a conexão para executar as ferramentas; não houve publicação nem alteração de ana_config.",
+  "production_deployed": true,
+  "ana_config_updated": true,
   "mcp_installed": true,
-  "mcp_authenticated": true
+  "mcp_authenticated": true,
+  "test_messages_sent_to_patients": 0,
+  "prompt": {
+    "before_md5": "e270569ee2bc4ff0be3984c289bf7e8d",
+    "after_md5": "844ef28c16c6ae382437dcfd036d94de",
+    "readback_verified": true,
+    "backup_key": "system_prompt_backup_continuidade_v2_20261014_e270569e",
+    "literal_markers_preserved": true
+  },
+  "workflows": [
+    {
+      "id": "XRUqhdO1QCyBBHbf",
+      "name": "ANA — 01 Atendimento WhatsApp (Total Quality)",
+      "active": true,
+      "version_id": "53ef1140-0c7c-49a7-b31b-bd37df600575",
+      "active_version_id": "53ef1140-0c7c-49a7-b31b-bd37df600575",
+      "node_count": 52
+    },
+    {
+      "id": "Z0iuQURxQ4MvGZTT",
+      "name": "ANA — 02 Follow-up Carinhoso (Total Quality)",
+      "active": true,
+      "version_id": "8a3db705-c24b-4b32-b207-0517cea58422",
+      "active_version_id": "8a3db705-c24b-4b32-b207-0517cea58422",
+      "node_count": 13
+    },
+    {
+      "id": "UEbCnaDY9c5GbLeR",
+      "name": "ANA-06 - Confirmacao de exame na vespera (09:00)",
+      "active": true,
+      "version_id": "6ff8a606-cf8b-4c06-a3d8-16438cb07417",
+      "active_version_id": "6ff8a606-cf8b-4c06-a3d8-16438cb07417",
+      "node_count": 13
+    },
+    {
+      "id": "1rnwiIYsRCzPYe7D",
+      "name": "BV-01 - Boas-vindas automáticas (site → WhatsApp)",
+      "active": true,
+      "version_id": "2743226c-2a1e-4ca3-8af1-b67faac94fd4",
+      "active_version_id": "2743226c-2a1e-4ca3-8af1-b67faac94fd4",
+      "node_count": 14
+    }
+  ],
+  "validation": {
+    "local_checks": 74,
+    "n8n_engine_tests": [
+      {
+        "scenario": "a-duplicate",
+        "execution_id": "197610",
+        "status": "success",
+        "external_services": "mocked"
+      },
+      {
+        "scenario": "a-human",
+        "execution_id": "197604",
+        "status": "success",
+        "external_services": "mocked"
+      },
+      {
+        "scenario": "a-reply",
+        "execution_id": "197605",
+        "status": "success",
+        "external_services": "mocked"
+      },
+      {
+        "scenario": "bv-loop",
+        "execution_id": "197615",
+        "status": "success",
+        "external_services": "mocked"
+      },
+      {
+        "scenario": "c-loop",
+        "execution_id": "197613",
+        "status": "success",
+        "external_services": "mocked"
+      },
+      {
+        "scenario": "fu-loop",
+        "execution_id": "197611",
+        "status": "success",
+        "external_services": "mocked"
+      }
+    ],
+    "postgres_rollback_test": {
+      "execution_id": "197524",
+      "status": "success"
+    },
+    "installation_execution_id": "197659",
+    "database_version": "17.6",
+    "rls_tables": [
+      {
+        "name": "ana_runtime_audit",
+        "rls": true
+      },
+      {
+        "name": "ana_runtime_kb",
+        "rls": true
+      },
+      {
+        "name": "ana_runtime_observed",
+        "rls": true
+      },
+      {
+        "name": "ana_runtime_outbox",
+        "rls": true
+      }
+    ],
+    "synthetic_rows_remaining": 0,
+    "errors_observed_at_verification": 0
+  },
+  "followup_limits_preserved": {
+    "per_day": 20,
+    "per_hour": 4,
+    "suspended": false
+  },
+  "knowledge_facts_pending": 5,
+  "maintenance_workflow": {
+    "id": "vyTQxPT0YCpXiyyO",
+    "archived": true,
+    "final_query": "read_only"
+  },
+  "limitations": [
+    "HTTP já iniciado não pode ser recolhido.",
+    "Eco tardio ou sem ID pode causar pausa conservadora.",
+    "Testes do motor usaram serviços externos simulados; nenhum envio real foi feito para teste.",
+    "Envios incertos exigem reconciliação manual.",
+    "ana_envios_log ainda registra reservas de follow-up; usar ana_runtime_outbox status accepted para contagens de aceitação pelo provedor."
+  ]
 }

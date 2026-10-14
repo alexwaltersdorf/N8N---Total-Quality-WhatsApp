@@ -8,17 +8,17 @@ Documentação revisada em **12/10/2026** a partir de 12 fluxos n8n (125 nós), 
 
 
 
-## Continuidade e pausa humana — 14/10/2026
+## Continuidade e pausa humana — implantado em 14/10/2026
 
-Correções versionadas para ANA-01, ANA-02, ANA-06 e BV-01: trava comum de envio, correlação dos ecos por ID, pausa humana persistente e respostas que aproveitam o histórico. **A implantação no n8n e a atualização de ana_config ainda estão pendentes.** A instalação autenticada do MCP não equivale à publicação dos fluxos.
+Correções publicadas e verificadas em ANA-01, ANA-02, ANA-06 e BV-01: trava comum de envio, correlação dos ecos por ID, pausa humana persistente e respostas que aproveitam o histórico. **Os quatro fluxos estão ativos e ana_config.system_prompt foi atualizado com backup e hash conferido.** A validação incluiu PostgreSQL real com rollback e seis cenários no motor n8n com serviços externos simulados.
 
 - [Política de atendimento V2](conhecimento/continuidade-pausa-v2.md)
 - [Guia de implantação, operação e limites](docs/CONTINUIDADE_V2.md)
 - [Relatório desta revisão em HTML](auditorias/2026/2026-10-14.html)
 - [Templates sanitizados e versões de origem](workflows/manifesto.json)
-- [Registro da preparação](conhecimento/implantacao-2026-10-14.json)
+- [Registro da implantação verificada](conhecimento/implantacao-2026-10-14.json)
 
-Validação local: 42 verificações de runtime, 23 testes do ML e 5 de publicação. Executar npm install --ignore-scripts e npm test. Os testes usam dados fictícios e não enviam mensagens a pacientes.
+Validação local: 45 verificações de runtime, 23 testes do ML e 6 de publicação. Executar npm install --ignore-scripts e npm test. Os testes usam dados fictícios e não enviam mensagens a pacientes.
 
 ## Comece aqui
 
@@ -35,7 +35,7 @@ Validação local: 42 verificações de runtime, 23 testes do ML e 5 de publica�
 Para ler o HTML com o layout completo, baixe o arquivo e abra no navegador. O GitHub pode exibir apenas o código-fonte; GitHub Pages não foi ativado por esta revisão.
 
 
-## Estado observado
+## Estado observado em 12/10/2026
 
 
 | Fluxo | Papel | IA | Gatilho |
