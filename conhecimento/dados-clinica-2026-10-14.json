@@ -5,7 +5,7 @@
     "status": "approved",
     "source": "Confirmação explícita do usuário neste chat em 14/10/2026",
     "reviewer": "Usuário responsável pela atualização da clínica",
-    "reviewed_at": "2026-10-14T13:17:25Z",
+    "reviewed_at": "2026-10-14T13:42:57Z",
     "valid_until": null
   },
   {
@@ -14,7 +14,7 @@
     "status": "approved",
     "source": "Confirmação explícita do usuário neste chat em 14/10/2026",
     "reviewer": "Usuário responsável pela atualização da clínica",
-    "reviewed_at": "2026-10-14T13:17:25Z",
+    "reviewed_at": "2026-10-14T13:42:57Z",
     "valid_until": null
   },
   {
@@ -23,7 +23,106 @@
     "status": "approved",
     "source": "Confirmação explícita do usuário neste chat em 14/10/2026",
     "reviewer": "Usuário responsável pela atualização da clínica",
-    "reviewed_at": "2026-10-14T13:17:25Z",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null
+  },
+  {
+    "key": "catalogo.exames.indisponiveis",
+    "content": "A Total Quality não realiza densitometria óssea. A mamografia está temporariamente suspensa devido à troca do equipamento. Não afirmar que a mamografia está disponível nem prometer data para retomada; encaminhar dúvidas sobre reabertura à recepção.",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null,
+    "status": "approved"
+  },
+  {
+    "key": "convenios.aguardando_operadora",
+    "content": "Credenciamentos vigentes informados: Solumedi, Cartão de Todos e Lead Saúde. Unimed, Amil, Bradesco e Petrobras (entre outros citados pela clínica) aguardam aprovação de credenciamento pela operadora de saúde; ainda não são aceitos. Não estimar prazo nem prometer aprovação. Confirmar cobertura e regras por plano/exame com a recepção.",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null,
+    "status": "approved"
+  },
+  {
+    "key": "convenios.regras",
+    "content": "PENDENTE: cobertura e regras por exame, plano/modalidade, autorização, valores e reembolso dos credenciamentos vigentes. Unimed, Amil, Bradesco e Petrobras aguardam aprovação da operadora e não podem ser apresentados como aceitos.",
+    "status": "draft",
+    "source": "Necessita tabela oficial vigente",
+    "reviewer": null,
+    "reviewed_at": null,
+    "valid_until": null
+  },
+  {
+    "key": "preparo.excecoes",
+    "content": "PENDENTE DE INSTRUÇÃO LOCAL: protocolo infantil e EEG com sono/privação; regras operacionais próprias para MAPA; preparo específico para tomografia com contraste e situações clínicas especiais. Encaminhar à recepção enquanto não houver orientação confirmada por exame e modalidade.",
+    "status": "draft",
+    "source": "Necessita protocolos locais por exame",
+    "reviewer": null,
+    "reviewed_at": null,
+    "valid_until": null
+  },
+  {
+    "key": "preparo.ultrassom.abdome_total",
+    "content": "Ultrassonografia de abdome total — adultos acima de 12 anos: jejum de 6 horas; água é permitida. Beber 6 copos de água 1 hora antes e manter a bexiga cheia, sem urinar. Fonte aprovada: FIDI, protocolo de US de abdome total. Crianças e pacientes com condição especial: confirme o preparo com a recepção. Não suspender medicamentos por conta própria.",
+    "status": "approved",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null
+  },
+  {
+    "key": "preparo.holter",
+    "content": "Holter 24h: nas 24 horas anteriores, não aplicar cremes, pomadas, bronzeador ou produtos oleosos no tórax. Comparecer com camisa aberta na frente ou camiseta larga. Levar pedido médico; exames anteriores são úteis se disponíveis. A retirada do aparelho ocorre no horário combinado. Não suspender medicamentos sem orientação do médico assistente.",
+    "status": "approved",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null
+  },
+  {
+    "key": "preparo.mapa",
+    "content": "MAPA 24h: a referência consultada agrupa Holter e MAPA, mas as instruções específicas do Holter não devem ser extrapoladas para MAPA isolado. Para instalação, retirada e atividades durante o registro, confirmar as orientações dadas pela equipe.",
+    "status": "approved",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null
+  },
+  {
+    "key": "preparo.eeg",
+    "content": "Eletroencefalograma: lavar o cabelo no dia anterior; não usar creme ou óleo capilar; comparecer com o cabelo seco. A fonte recomenda alimentação normal. EEG durante o sono/privação de sono exige instrução específica da clínica; sem essa instrução, encaminhar à recepção. Não orientar privação de sono por conta própria.",
+    "status": "approved",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null
+  },
+  {
+    "key": "preparo.ecg",
+    "content": "Eletrocardiograma de repouso em adulto: não exige preparo específico na referência consultada; usar roupa que facilite o acesso ao tórax. Casos pediátricos ou com marca-passo devem ser confirmados com a recepção; levar a carteirinha do dispositivo se houver.",
+    "status": "approved",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null
+  },
+  {
+    "key": "preparo.hemograma",
+    "content": "Hemograma isolado: segundo a referência aprovada, após dieta leve o jejum não é necessário; caso contrário, a fonte sugere 3 horas. Evitar realizar após grande esforço físico. Se houver outros exames no mesmo pedido, não generalizar este preparo: confirmar as instruções para o conjunto com a recepção/laboratório.",
+    "status": "approved",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
+    "valid_until": null
+  },
+  {
+    "key": "preparo.tomografia_contraste.limite",
+    "content": "Tomografia com contraste: encaminhar preparo à recepção/equipe de radiologia. As fontes consultadas contêm instruções dependentes da situação clínica e medicamentos. Ana não deve recomendar dose, início, suspensão ou alteração de medicamentos, nem jejum/contraste sem protocolo individual confirmado pela clínica.",
+    "status": "approved",
+    "source": "Confirmação e aprovação explícita do usuário neste chat em 14/10/2026",
+    "reviewer": "Usuário responsável pela atualização da clínica",
+    "reviewed_at": "2026-10-14T13:42:57Z",
     "valid_until": null
   }
 ]
