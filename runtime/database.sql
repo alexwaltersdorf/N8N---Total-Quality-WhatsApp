@@ -14,6 +14,21 @@ DO $legacy$ DECLARE r text; BEGIN
   END LOOP;
  END IF;
 END $legacy$;
+-- Perfil de comunicação V1 (2026-10-17): estilo, objeção e estado emocional inferidos pela Ana.
+-- Não guardam dado de saúde. Aditivo e idempotente.
+ALTER TABLE ana_leads ADD COLUMN IF NOT EXISTS estilo text,
+ ADD COLUMN IF NOT EXISTS estilo_confianca numeric(3,2),
+ ADD COLUMN IF NOT EXISTS objecao text,
+ ADD COLUMN IF NOT EXISTS estado_emocional text;
+DO $perfil$ BEGIN
+ IF NOT EXISTS(SELECT 1 FROM pg_constraint WHERE conname='ana_leads_perfil_v1_chk') THEN
+  ALTER TABLE ana_leads ADD CONSTRAINT ana_leads_perfil_v1_chk CHECK (
+   (estilo IS NULL OR estilo IN ('D','I','S','C'))
+   AND (estilo_confianca IS NULL OR estilo_confianca BETWEEN 0 AND 1)
+   AND (objecao IS NULL OR objecao IN ('preco','convenio','confianca','timing','decisor','concorrente','nenhuma'))
+   AND (estado_emocional IS NULL OR estado_emocional IN ('neutro','positivo','ansioso','irritado','confuso','com_pressa')));
+ END IF;
+END $perfil$;
 CREATE TABLE IF NOT EXISTS ana_runtime_outbox (
  send_key text PRIMARY KEY, phone text NOT NULL, origin text NOT NULL,
  owner text NOT NULL, status text NOT NULL CHECK(status IN ('reserved','accepted','failed','unknown')),
@@ -258,14 +273,14 @@ BEGIN
       AND coalesce((l.agendamento->>'realizado')::boolean, false) = false
       AND coalesce(l.status_manual, '') NOT IN ('Agendou', 'Encerrado', 'Não Aplica')
       AND l.last_patient_msg_at IS NOT NULL
-      AND coalesce(l.followup_step, 0) < 5
+      AND coalesce(l.followup_step, 0) < 3
       AND NOT EXISTS (
         SELECT 1 FROM ana_envios_log e
          WHERE e.phone = l.phone
            AND (e.enviado_em AT TIME ZONE 'America/Sao_Paulo')::date = v_hoje)
       AND (SELECT count(*) FROM ana_envios_log e
             WHERE e.phone = l.phone AND e.tipo = 'follow_up'
-              AND e.enviado_em > coalesce(l.last_patient_msg_at, '-infinity'::timestamptz)) < 2
+              AND e.enviado_em > coalesce(l.last_patient_msg_at, '-infinity'::timestamptz)) < 3
     ORDER BY l.followup_due_at
     LIMIT 1
     FOR UPDATE OF l SKIP LOCKED

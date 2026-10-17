@@ -8,6 +8,10 @@ Documentação revisada em **12/10/2026** a partir de 12 fluxos n8n (125 nós), 
 
 
 
+## Perfil e cadência V1 — preparado em 17/10/2026 (não implantado)
+
+Follow-up em 3 passos (~3h, +1 dia, +2 dias com encerramento) e estilo de comunicação, objeção e estado emocional no contrato `###DADOS###`. Inclui a correção do follow-up que parava no primeiro passo. Detalhes, testes e passos de implantação no [CHANGELOG](CHANGELOG.md) e no [módulo de prompt](conhecimento/perfil-cadencia-v1.md).
+
 ## Continuidade e pausa humana — implantado em 14/10/2026
 
 Correções publicadas e verificadas em ANA-01, ANA-02, ANA-06 e BV-01: trava comum de envio, correlação dos ecos por ID, pausa humana persistente e respostas que aproveitam o histórico. **Os quatro fluxos estão ativos e ana_config.system_prompt foi atualizado com backup e hash conferido.** A validação incluiu PostgreSQL real com rollback e seis cenários no motor n8n com serviços externos simulados.

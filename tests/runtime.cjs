@@ -269,6 +269,73 @@ await test('Gravação da base preserva marcadores literais, backup e hash',asyn
  assert.equal((await pg.query('SELECT valor FROM ana_config WHERE chave=$1',[plan.backup_key])).rows[0].valor,original);
  await assert.rejects(()=>pg.exec(plan.sql),/Prompt atual mudou/);await pg.exec('ROLLBACK');
 });
+// --- Perfil de comunicação e cadência V1 (2026-10-17) ---
+const horasAte=iso=>(new Date(iso).getTime()-Date.now())/3600000;
+await test('Perfil V1: estilo só é gravado com confiança mínima; enums inválidos são descartados',()=>{
+ const ok=JSON.parse(extract('Certo\n###DADOS###{"estilo":"S","estilo_confianca":0.82,"objecao":"convenio","estado_emocional":"ansioso"}').pg_lead);
+ assert.equal(ok.estilo,'S');assert.equal(ok.estilo_confianca,0.82);assert.equal(ok.objecao,'convenio');assert.equal(ok.estado_emocional,'ansioso');
+ const baixa=JSON.parse(extract('Certo\n###DADOS###{"estilo":"D","estilo_confianca":0.4}').pg_lead);
+ assert(!('estilo' in baixa));assert(!('estilo_confianca' in baixa));
+ const neutro=JSON.parse(extract('Certo\n###DADOS###{"estilo":"N","estilo_confianca":0.9}').pg_lead);assert(!('estilo' in neutro));
+ const ruim=JSON.parse(extract('Certo\n###DADOS###{"estilo":"X","estilo_confianca":"0.9","objecao":"diabetes","estado_emocional":"triste"}').pg_lead);
+ assert(!('estilo' in ruim));assert(!('objecao' in ruim));assert(!('estado_emocional' in ruim));
+});
+await test('Cadência V1: orçamento ou pergunta pendente vira follow_up_d1 em ~3h',()=>{
+ const q=extract('O valor é R$ 120,00.\n\nQuer que eu encaminhe um horário?\n###DADOS###{"proxima_acao":"aguardar_resposta"}');
+ assert.equal(q.dados.proxima_acao,'follow_up_d1');const h=horasAte(q.dados.followup_due);assert(h>2.9&&h<3.1,String(h));
+ const preco=extract('O valor é R$ 120,00.\n###DADOS###{}');assert.equal(preco.dados.proxima_acao,'follow_up_d1');
+ const pedido=extract('Combinado, te escrevo semana que vem.\n###DADOS###{"proxima_acao":"follow_up_d7"}');
+ const h7=horasAte(pedido.dados.followup_due);assert(h7>167.9&&h7<168.1,String(h7));assert.equal(pedido.dados.proxima_acao,'follow_up_d7');
+});
+await test('Cadência V1: sem pendência, encerramento, silêncio, pausa ou agenda confirmada não agendam retomada',()=>{
+ const info=extract('Ficamos na Rua Padre Anchieta.\n###DADOS###{"proxima_acao":"aguardar_resposta"}');assert.equal(info.dados.proxima_acao,'aguardar_resposta');
+ assert.equal(extract('Até logo!\n###DADOS###{"proxima_acao":"encerrar"}').dados.followup_due,null);
+ assert.equal(extract('###DADOS###{"proxima_acao":"aguardar_resposta"}').dados.followup_due,null);
+ const h=extract('Quer o valor?\n###DADOS###{}',{},'Quero falar com uma atendente');assert.equal(h.dados.followup_due,null);assert.equal(h.dados.proxima_acao,'escalar');
+ assert.equal(extract('Mais alguma dúvida?\n###DADOS###{}',{agendamento:{status:'confirmado'}}).dados.followup_due,null);
+});
+await test('Perfil V1: Atualizar Lead grava, preserva quando omitido e o banco rejeita valor fora do domínio',async()=>{
+ const p=await lead();let id=await input(p);
+ await pg.query(node(a,'Atualizar Lead').parameters.query,[JSON.stringify({phone:p,input_id:id,human_snapshot:null,pausar:false,estilo:'C',estilo_confianca:0.75,objecao:'preco',estado_emocional:'neutro'})]);
+ id=await input(p);
+ await pg.query(node(a,'Atualizar Lead').parameters.query,[JSON.stringify({phone:p,input_id:id,human_snapshot:null,pausar:false,objecao:'nenhuma'})]);
+ const r=(await pg.query('SELECT estilo,estilo_confianca::float AS conf,objecao,estado_emocional FROM ana_leads WHERE phone=$1',[p])).rows[0];
+ assert.deepEqual(r,{estilo:'C',conf:0.75,objecao:'nenhuma',estado_emocional:'neutro'});
+ await assert.rejects(()=>pg.query("UPDATE ana_leads SET estilo='X' WHERE phone=$1",[p]),/ana_leads_perfil_v1_chk/);
+});
+await test('Perfil V1: payload leva o módulo uma única vez e o estilo do lead no contexto',()=>{
+ const modulo=fs.readFileSync(path.join(out,'conhecimento/perfil-cadencia-v1.md'),'utf8').trim();
+ const refs={'Carregar Histórico':[{role:'user',conteudo:'Quanto custa?'}],'Carregar System Prompt':{valor:'Base original\n'+modulo,kb:''},'Upsert Lead':{phone:'5511999990001',estilo:'D',estilo_confianca:0.8,objecao:'preco',estado_emocional:'com_pressa'}};
+ const b=run(a,'Montar Payload',{},refs)[0].json.openai_body;
+ assert.equal((b.instructions.match(/ANA_PERFIL_V1_INICIO/g)||[]).length,1);assert(b.instructions.includes(modulo));
+ const ctx=b.input.at(-1).content;
+ assert(ctx.includes('Estilo provável: D (0.8)'));assert(ctx.includes('Objeção registrada: preco'));assert(ctx.includes('Último estado emocional: com_pressa'));
+ const semPerfil=run(a,'Montar Payload',{},{...refs,'Upsert Lead':{phone:'5511999990001',objecao:'nenhuma',estado_emocional:'neutro'}})[0].json.openai_body.input.at(-1).content;
+ assert(!semPerfil.includes('Estilo provável'));assert(!semPerfil.includes('Objeção registrada'));assert(!semPerfil.includes('estado emocional'));
+});
+await test('ANA-02 V1: três passos — retomada, preferência com opt-out e encerramento',()=>{
+ const fuRun=(step,extra={})=>run(fu,'Montar Follow-up',{phone:'5511999990002',nome:'maria souza',followup_step:step,exames_txt:'Ultrassonografia',...extra})[0].json;
+ const s1=fuRun(1),l1=JSON.parse(s1.pg_lead);
+ assert(s1.mensagem.startsWith('Oi, Maria!'));assert.equal(l1.proxima_acao,'follow_up_d1');const h1=horasAte(l1.followup_due);assert(h1>23.9&&h1<24.1);
+ const s2=fuRun(2,{tem_lab:true}),l2=JSON.parse(s2.pg_lead);
+ assert(s2.mensagem.includes('*parar*'));assert(s2.mensagem.includes('coleta domiciliar'));assert.equal(l2.proxima_acao,'follow_up_d1');const h2=horasAte(l2.followup_due);assert(h2>47.9&&h2<48.1);
+ const s3=fuRun(3),l3=JSON.parse(s3.pg_lead);
+ assert(s3.mensagem.includes('encerrar os lembretes'));assert.equal(l3.proxima_acao,'encerrar');assert.equal(l3.followup_due,null);
+ assert.equal(fuRun(4).skip,true);
+});
+await test('Busca V1: terceiro follow-up sem resposta é liberado; o quarto não',async()=>{
+ const claim=async agora=>(await pg.query(node(fu,'Buscar Leads com Follow-up Devido').parameters.query.replace('ana_claim_followups()',"ana_claim_followups(1,'"+agora+"')"))).rows.map(r=>r.phone);
+ const base={proxima_acao:'follow_up_d1',followup_due_at:'2000-01-01T00:00:00Z',last_patient_msg_at:'2026-10-10T13:00:00Z',exames:'[]'};
+ const p=await lead(undefined,{...base,followup_step:2});
+ await pg.query("INSERT INTO ana_envios_log(phone,tipo,enviado_em) VALUES($1,'follow_up','2026-10-11T14:00:00Z'),($1,'follow_up','2026-10-12T14:00:00Z')",[p]);
+ assert((await claim('2026-10-15T14:00:00Z')).includes(p));
+ assert.equal((await pg.query('SELECT followup_step FROM ana_leads WHERE phone=$1',[p])).rows[0].followup_step,3);
+ const q=await lead(undefined,{...base,followup_step:1});
+ await pg.query("INSERT INTO ana_envios_log(phone,tipo,enviado_em) VALUES($1,'follow_up','2026-10-11T14:00:00Z'),($1,'follow_up','2026-10-12T14:00:00Z'),($1,'follow_up','2026-10-13T14:00:00Z')",[q]);
+ assert(!(await claim('2026-10-16T14:00:00Z')).includes(q));
+ const r=await lead(undefined,{...base,followup_step:3});
+ assert(!(await claim('2026-10-19T14:00:00Z')).includes(r));
+});
 const result={generated_at:new Date().toISOString(),engine:'PGlite 0.5.9; PostgreSQL embarcado; esquema mínimo inferido dos exports',scope:'JS de nós, SQL real e grafo. Não substitui n8n/Evolution nem teste concorrente multiconexão.',passed:checks.length,checks};
 fs.mkdirSync(path.join(out,'tests/results'),{recursive:true});fs.writeFileSync(path.join(out,'tests/results/runtime.json'),JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({passed:checks.length,engine:result.engine}));

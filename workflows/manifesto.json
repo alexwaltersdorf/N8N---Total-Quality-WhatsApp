@@ -1,21 +1,21 @@
 {
-  "version": "continuidade-v2",
-  "prepared_on": "2026-10-14",
-  "production_deployed": true,
+  "version": "perfil-cadencia-v1",
+  "prepared_on": "2026-10-17",
+  "production_deployed": false,
   "workflows": {
     "01-ANA-Atendimento-corrigido.json": {
       "workflow_id": "XRUqhdO1QCyBBHbf",
-      "baseline_version_id": "07387b2d-f14a-450c-a015-ac41a2249985",
-      "source": "export privado fornecido em 2026-10-13",
-      "source_sha256": "6f1dd84e7a176b42e5b30820cd6336ca4308d3d2bf75495fafdaaa5711e80198",
-      "deployed_version_id": "53ef1140-0c7c-49a7-b31b-bd37df600575"
+      "baseline_version_id": "53ef1140-0c7c-49a7-b31b-bd37df600575",
+      "source": "versão continuidade-v2 implantada em 2026-10-14",
+      "deployed_version_id": null,
+      "changed_in": "perfil-cadencia-v1"
     },
     "02-ANA-Followup-corrigido.json": {
       "workflow_id": "Z0iuQURxQ4MvGZTT",
-      "baseline_version_id": "9abccf4b-2451-406c-987d-e9fd337a4767",
-      "source": "export privado fornecido em 2026-10-13",
-      "source_sha256": "d071bdb6d5f3f29fe3d822e22b5eb700501f80a7595dd8ef212ca2d36f69e736",
-      "deployed_version_id": "8a3db705-c24b-4b32-b207-0517cea58422"
+      "baseline_version_id": "8a3db705-c24b-4b32-b207-0517cea58422",
+      "source": "versão continuidade-v2 implantada em 2026-10-14",
+      "deployed_version_id": null,
+      "changed_in": "perfil-cadencia-v1"
     },
     "06-ANA-Confirmacao-corrigida.json": {
       "workflow_id": "UEbCnaDY9c5GbLeR",
@@ -36,5 +36,14 @@
   "institutional_update": {
     "date": "2026-10-14",
     "evidence": "../conhecimento/implantacao-institucional-2026-10-14.json"
+  },
+  "previous_version": "continuidade-v2",
+  "pending_deploy": {
+    "sql": "runtime/database.sql (colunas de perfil + limite de 3 follow-ups)",
+    "prompt_module": "conhecimento/perfil-cadencia-v1.md (já embutido no Montar Payload)",
+    "workflows": [
+      "01-ANA-Atendimento-corrigido.json",
+      "02-ANA-Followup-corrigido.json"
+    ]
   }
 }
